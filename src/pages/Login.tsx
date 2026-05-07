@@ -9,7 +9,9 @@
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, Lock, Mail, AlertCircle, Scale } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { useAuth } from '@/hooks/auth/useAuth'
+import VerificarMFA from '@/components/auth/VerificarMFA'
+import ConfigurarMFA from '@/components/auth/ConfigurarMFA'
 
 interface FormState {
   email: string
@@ -87,6 +89,7 @@ function DividerOuro() {
 
 export default function Login() {
   const navigate = useNavigate()
+  const auth = useAuth()
   const [form, setForm] = useState<FormState>({
     email: '',
     password: '',
@@ -117,23 +120,20 @@ export default function Login() {
     setForm(prev => ({ ...prev, loading: true, error: null }))
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: form.email.trim().toLowerCase(),
-        password: form.password,
-      })
+      const resultado = await auth.login(form.email, form.password)
 
-      if (error) {
-        const msg =
-          error.message === 'Invalid login credentials'
-            ? 'E-mail ou senha inválidos. Verifique suas credenciais.'
-            : error.message === 'Email not confirmed'
-              ? 'Confirme seu e-mail antes de acessar o sistema.'
-              : 'Erro ao autenticar. Tente novamente.'
-        setForm(prev => ({ ...prev, loading: false, error: msg }))
+      if (resultado.erro) {
+        setForm(prev => ({ ...prev, loading: false, error: resultado.erro ?? null }))
         return
       }
 
-      navigate('/cobranca')
+      setForm(prev => ({ ...prev, loading: false }))
+
+      // Se não há MFA pendente ou a ser configurado, navegar direto
+      // (MFA pendente/não configurado será tratado pelos overlays abaixo)
+      if (!auth.mfaPendente && !auth.mfaNaoConfigurado) {
+        navigate('/cobranca')
+      }
     } catch {
       setForm(prev => ({
         ...prev,
@@ -141,6 +141,34 @@ export default function Login() {
         error: 'Falha de conexão. Verifique sua internet e tente novamente.',
       }))
     }
+  }
+
+  // ── Overlay: verificação MFA ──────────────────────────────
+  if (auth.mfaPendente && auth.user) {
+    return (
+      <div className="fixed inset-0 z-50" style={{ backgroundColor: '#060e18' }}>
+        <VerificarMFA
+          usuario_id={auth.user.id}
+          onVerificado={() => navigate('/cobranca')}
+          onCancelar={async () => {
+            await auth.logout()
+            navigate('/login')
+          }}
+        />
+      </div>
+    )
+  }
+
+  // ── Overlay: configuração MFA ─────────────────────────────
+  if (auth.mfaNaoConfigurado && auth.user) {
+    return (
+      <div className="fixed inset-0 z-50" style={{ backgroundColor: '#060e18' }}>
+        <ConfigurarMFA
+          usuario_id={auth.user.id}
+          onConcluido={() => navigate('/cobranca')}
+        />
+      </div>
+    )
   }
 
   return (

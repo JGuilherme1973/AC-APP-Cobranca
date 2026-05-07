@@ -10,6 +10,7 @@ import { z } from 'zod'
 import { AlertCircle, AlertTriangle, Plus, Trash2 } from 'lucide-react'
 import { mascaraCPF, mascaraCNPJ, mascaraTelefone } from '@/lib/validators'
 import type { DevedorFormData } from '@/hooks/cobranca/useCriarCaso'
+import { validarCPF, validarCNPJ } from '@/lib/seguranca/serpro'
 
 // ── Schema ────────────────────────────────────────────────────
 const schema = z.object({
@@ -146,6 +147,12 @@ interface Props {
 export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
   const [semCPF, setSemCPF] = useState(false)
 
+  type SerproStatus = 'idle' | 'loading' | 'valido' | 'atencao' | 'invalido' | 'stub'
+  const [serproStatus, setSerproStatus] = useState<SerproStatus>('idle')
+  const [serproNome, setSerproNome]     = useState<string | null>(null)
+  const [serproMsg, setSerproMsg]       = useState<string | null>(null)
+  const [serproForcar, setSerproForcar] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -177,6 +184,34 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
   const { fields: endFields, append: appEnd, remove: remEnd } = useFieldArray({ control, name: 'enderecos' })
   const { fields: telFields, append: appTel, remove: remTel } = useFieldArray({ control, name: 'telefones' })
   const { fields: emlFields, append: appEml, remove: remEml } = useFieldArray({ control, name: 'emails'    })
+
+  const handleCPFCNPJBlur = async () => {
+    const val = watch('cpf_cnpj')?.replace(/\D/g, '') ?? ''
+    if (val.length < 11) return
+    setSerproStatus('loading')
+    setSerproNome(null)
+    setSerproMsg(null)
+    try {
+      const result = val.length === 11 ? await validarCPF(val) : await validarCNPJ(val)
+      if (result.nome === 'VALIDAÇÃO LOCAL') {
+        setSerproStatus(result.valido ? 'stub' : 'invalido')
+        setSerproMsg(result.valido ? 'Validação offline (SERPRO não configurado)' : 'CPF/CNPJ com formato inválido')
+      } else if (result.bloqueado || !result.valido) {
+        setSerproStatus('invalido')
+        setSerproMsg(result.alerta ?? 'CPF/CNPJ inválido — verificar dado antes de prosseguir')
+      } else if (result.alerta) {
+        setSerproStatus('atencao')
+        setSerproMsg(result.alerta)
+        setSerproNome(result.nome ?? null)
+      } else {
+        setSerproStatus('valido')
+        setSerproNome(result.nome ?? null)
+      }
+    } catch {
+      setSerproStatus('stub')
+      setSerproMsg('Validação offline — SERPRO indisponível')
+    }
+  }
 
   const handleSubmitForm = (data: FormData) => {
     const result: DevedorFormData = {
@@ -250,7 +285,46 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
                     const v = tipo === 'PJ' ? mascaraCNPJ(e.target.value) : mascaraCPF(e.target.value)
                     setValue('cpf_cnpj', v)
                   }}
+                  onBlur={() => { void handleCPFCNPJBlur() }}
                 />
+                {serproStatus !== 'idle' && !semCPF && (
+                  <div className="mt-2">
+                    {serproStatus === 'loading' && (
+                      <div className="flex items-center gap-2 text-xs" style={{ color: '#9B9B9B' }}>
+                        <div className="w-3 h-3 rounded-full border border-gray-400 border-t-transparent animate-spin" />
+                        Consultando SERPRO...
+                      </div>
+                    )}
+                    {serproStatus === 'valido' && (
+                      <div className="px-3 py-2 rounded text-xs" style={{ backgroundColor: '#F0FDF4', border: '1px solid #86EFAC', color: '#166534' }}>
+                        ✓ VÁLIDO{serproNome ? ` — ${serproNome}` : ''}
+                      </div>
+                    )}
+                    {serproStatus === 'stub' && (
+                      <div className="px-3 py-2 rounded text-xs" style={{ backgroundColor: '#F9FAFB', border: '1px solid #D1D5DB', color: '#6B7280' }}>
+                        ℹ Validação offline (SERPRO não configurado)
+                      </div>
+                    )}
+                    {serproStatus === 'atencao' && (
+                      <div>
+                        <div className="px-3 py-2 rounded text-xs" style={{ backgroundColor: '#FFFBEB', border: '1px solid #FCD34D', color: '#92400E' }}>
+                          ⚠ {serproMsg}{serproNome ? ` — ${serproNome}` : ''}
+                        </div>
+                      </div>
+                    )}
+                    {serproStatus === 'invalido' && (
+                      <div>
+                        <div className="px-3 py-2 rounded text-xs mb-1" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#991B1B' }}>
+                          ✕ {serproMsg}
+                        </div>
+                        <label className="flex items-center gap-2 text-xs cursor-pointer" style={{ color: '#92400E' }}>
+                          <input type="checkbox" checked={serproForcar} onChange={e => setSerproForcar(e.target.checked)} className="rounded" />
+                          Estou ciente e confirmo prosseguir com este dado
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <div className="mt-1 flex items-center gap-2">
                   <button type="button" onClick={() => { setSemCPF(true); setValue('cpf_cnpj', '') }}
                     className="font-lato text-xs" style={{ color: '#9B9B9B', textDecoration: 'underline' }}>
@@ -391,13 +465,21 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
           onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: 'white',   color: '#5A1E2A' }) }}>
           ← Anterior
         </button>
-        <button type="submit"
-          className="px-8 py-2.5 rounded font-montserrat text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: '#5A1E2A' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}>
-          Próximo →
-        </button>
+        <div className="flex flex-col items-end gap-1">
+          <button type="submit"
+            disabled={serproStatus === 'invalido' && !serproForcar}
+            className="px-8 py-2.5 rounded font-montserrat text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            style={{ backgroundColor: '#5A1E2A' }}
+            onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}>
+            Próximo →
+          </button>
+          {serproStatus === 'invalido' && !serproForcar && (
+            <p className="font-lato text-xs" style={{ color: '#92400E' }}>
+              Informe um CPF/CNPJ válido ou confirme prosseguir.
+            </p>
+          )}
+        </div>
       </div>
     </form>
   )

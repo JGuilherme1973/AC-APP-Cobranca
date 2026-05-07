@@ -11,6 +11,15 @@ import FichaCaso          from '@/components/cobranca/FichaCaso'
 import ListaCasos         from '@/components/cobranca/ListaCasos'
 import ConfiguracaoRegua  from '@/components/cobranca/ConfiguracaoRegua'
 import PortalNegociacao   from '@/pages/negociar/PortalNegociacao'
+import ConfigurarMFA      from '@/components/auth/ConfigurarMFA'
+import VerificarMFA       from '@/components/auth/VerificarMFA'
+
+// Guard para rotas MFA — requer user_id no sessionStorage
+function MFARoute({ children }: { children: (userId: string) => React.ReactNode }) {
+  const userId = sessionStorage.getItem('user_id')
+  if (!userId) return <Navigate to="/login" replace />
+  return <>{children(userId)}</>
+}
 
 // Guard de rota autenticada
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -158,6 +167,53 @@ export default function App() {
         element={
           <ProtectedRoute>
             <AppLayout><ConfiguracaoRegua /></AppLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Rotas de MFA — requerem sessão Supabase + user_id no sessionStorage */}
+      <Route
+        path="/auth/configurar-mfa"
+        element={
+          <ProtectedRoute>
+            <MFARoute>
+              {(userId) => (
+                <ConfigurarMFA
+                  usuario_id={userId}
+                  onConcluido={() => {
+                    sessionStorage.removeItem('mfa_pendente')
+                    sessionStorage.removeItem('user_id')
+                    window.location.replace('/cobranca')
+                  }}
+                />
+              )}
+            </MFARoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/auth/verificar-mfa"
+        element={
+          <ProtectedRoute>
+            <MFARoute>
+              {(userId) => (
+                <VerificarMFA
+                  usuario_id={userId}
+                  onVerificado={() => {
+                    sessionStorage.removeItem('mfa_pendente')
+                    sessionStorage.removeItem('user_id')
+                    window.location.replace('/cobranca')
+                  }}
+                  onCancelar={() =>
+                    supabase.auth.signOut().then(() => {
+                      sessionStorage.removeItem('mfa_pendente')
+                      sessionStorage.removeItem('user_id')
+                      window.location.replace('/login')
+                    })
+                  }
+                />
+              )}
+            </MFARoute>
           </ProtectedRoute>
         }
       />

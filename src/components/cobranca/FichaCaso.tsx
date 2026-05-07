@@ -6,7 +6,7 @@
  *   Direita  (60%): ações rápidas, timeline, documentos, mini-kanban de tarefas
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { format, parseISO, differenceInDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -17,8 +17,12 @@ import {
 } from 'lucide-react'
 
 import { useFichaCaso } from '@/hooks/cobranca/useFichaCaso'
-import TimelineCaso  from './TimelineCaso'
-import PainelAcoes   from './PainelAcoes'
+import TimelineCaso               from './TimelineCaso'
+import PainelAcoes                from './PainelAcoes'
+import PainelPagamento            from './PainelPagamento'
+import PainelProtestoNegativacao  from './PainelProtestoNegativacao'
+import PainelLGPD                 from './PainelLGPD'
+import { supabase } from '@/lib/supabase'
 import { formatarMoeda, formatarData } from '@/lib/utils'
 import type { StatusPrescricao, EtapaCaso } from '@/types/cobranca'
 
@@ -189,9 +193,14 @@ function CampoPesquisa({
 }
 
 // ── FichaCaso principal ───────────────────────────────────────
+type AbaFicha = 'resumo' | 'timeline' | 'pagamentos' | 'protesto' | 'lgpd' | 'documentos'
+
 export default function FichaCaso() {
   const { id }   = useParams<{ id: string }>()
   const navigate = useNavigate()
+
+  const [abaAtiva, setAbaAtiva] = useState<AbaFicha>('resumo')
+  const [protestosPendentes, setProtestosPendentes] = useState(0)
 
   const {
     caso, eventos, documentos, tarefas,
@@ -203,6 +212,13 @@ export default function FichaCaso() {
     atualizarStatusTarefa,
     salvarDocumentoPDF,
   } = useFichaCaso(id ?? '')
+
+  useEffect(() => {
+    if (!id) return
+    supabase.from('protestos').select('id', { count: 'exact', head: true })
+      .eq('caso_id', id).eq('status', 'aguardando_aprovacao')
+      .then(({ count }) => setProtestosPendentes(count ?? 0))
+  }, [id])
 
   // ── Loading / Erro ────────────────────────────────────────
   if (loading) {
@@ -321,6 +337,13 @@ export default function FichaCaso() {
                 </span>
                 {/* Badge prescrição */}
                 <BadgePrescricao status={titulo.status_prescricao} dias={diasPrescricao} />
+                {/* Badge protesto pendente */}
+                {protestosPendentes > 0 && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold"
+                    style={{ backgroundColor: '#FFFBEB', color: '#92400E', border: '1px solid #FCD34D' }}>
+                    🔔 {protestosPendentes} protesto(s) pendente(s)
+                  </span>
+                )}
               </div>
             </div>
 
@@ -511,87 +534,131 @@ export default function FichaCaso() {
         </div>
 
         {/* ── COLUNA DIREITA (60%) ───────────────────────────── */}
-        <div className="xl:flex-1 space-y-5">
+        <div className="xl:flex-1 space-y-0">
 
-          {/* Ações rápidas */}
-          <div className="bg-white rounded-lg border shadow-sm" style={{ borderColor: '#E2D9C8' }}>
-            <div className="px-5 py-3.5 flex items-center gap-2"
-              style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
-              <Scale size={15} style={{ color: '#B89C5C' }} />
-              <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
-                Ações Rápidas
-              </h3>
-            </div>
-            <div className="p-4">
-              <PainelAcoes
-                caso={caso}
-                onEnviarWA={(template, conteudo) =>
-                  registrarComunicacao('WHATSAPP', template,
-                    caso.titulo.devedor.telefones?.[0] ?? 'desconhecido', conteudo)
-                }
-                onEnviarEmail={(template, destinatario, conteudo) =>
-                  registrarComunicacao('EMAIL', template, destinatario, conteudo)
-                }
-                onRegistrarEvento={(tipo, descricao) => registrarEvento(tipo, descricao)}
-                onSalvarPDF={(nome, url) => salvarDocumentoPDF(nome, url)}
-              />
-            </div>
-          </div>
-
-          {/* Timeline */}
-          <div className="bg-white rounded-lg border shadow-sm" style={{ borderColor: '#E2D9C8' }}>
-            <div className="px-5 py-3.5 flex items-center gap-2"
-              style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
-              <Clock size={15} style={{ color: '#B89C5C' }} />
-              <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
-                Timeline do Caso
-              </h3>
-              <span className="ml-auto font-montserrat text-xs" style={{ color: '#9B9B9B' }}>
-                {eventos.length} evento{eventos.length !== 1 ? 's' : ''}
-              </span>
-            </div>
-            <div className="p-5">
-              <TimelineCaso eventos={eventos} />
-            </div>
-          </div>
-
-          {/* Documentos */}
-          <div className="bg-white rounded-lg border shadow-sm" style={{ borderColor: '#E2D9C8' }}>
-            <div className="px-5 py-3.5 flex items-center gap-2"
-              style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
-              <FileText size={15} style={{ color: '#B89C5C' }} />
-              <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
-                Documentos
-              </h3>
-            </div>
-            <div className="divide-y" style={{ '--tw-divide-color': '#E2D9C8' } as React.CSSProperties}>
-              {documentos.length === 0 ? (
-                <p className="px-5 py-6 text-center font-lato text-sm" style={{ color: '#9B9B9B' }}>
-                  Nenhum documento anexado.
-                </p>
-              ) : documentos.map(doc => (
-                <div key={doc.id} className="flex items-center gap-3 px-5 py-3">
-                  <FileText size={16} style={{ color: '#B89C5C', flexShrink: 0 }} />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-lato text-sm truncate" style={{ color: '#1A1A1A' }}>
-                      {doc.nome_arquivo}
-                    </p>
-                    <p className="font-lato text-[10px]" style={{ color: '#9B9B9B' }}>
-                      {doc.tipo_documento} · {format(parseISO(doc.data_upload), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
-                    </p>
-                  </div>
-                  <a href={doc.url_storage} target="_blank" rel="noreferrer"
-                    className="p-1.5 rounded border transition-colors hover:border-[#B89C5C]"
-                    style={{ borderColor: '#E2D9C8', color: '#9B9B9B' }}>
-                    <Download size={14} />
-                  </a>
-                </div>
+          {/* Tab bar */}
+          <div className="bg-white rounded-t-lg border" style={{ borderColor: '#E2D9C8' }}>
+            <div className="flex overflow-x-auto">
+              {([
+                { key: 'resumo',      label: 'Resumo'           },
+                { key: 'timeline',    label: 'Timeline'          },
+                { key: 'pagamentos',  label: 'Pagamentos'        },
+                { key: 'protesto',    label: 'Protesto/Neg.'     },
+                { key: 'lgpd',        label: 'LGPD'              },
+                { key: 'documentos',  label: 'Documentos'        },
+              ] as const).map(({ key, label }) => (
+                <button key={key}
+                  onClick={() => setAbaAtiva(key)}
+                  className="px-4 py-3 text-xs font-montserrat font-semibold whitespace-nowrap border-b-2 transition-colors"
+                  style={{
+                    borderBottomColor: abaAtiva === key ? '#5A1E2A' : 'transparent',
+                    color: abaAtiva === key ? '#5A1E2A' : '#9B9B9B',
+                    backgroundColor: 'transparent',
+                  }}>
+                  {label}
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Mini-Kanban de Tarefas */}
-          <div className="bg-white rounded-lg border shadow-sm" style={{ borderColor: '#E2D9C8' }}>
+          {/* Tab content */}
+          <div className="bg-white rounded-b-lg border border-t-0 shadow-sm" style={{ borderColor: '#E2D9C8' }}>
+
+            {/* RESUMO — PainelAcoes */}
+            {abaAtiva === 'resumo' && (
+              <div className="p-4">
+                <PainelAcoes
+                  caso={caso}
+                  onEnviarWA={(template, conteudo) =>
+                    registrarComunicacao('WHATSAPP', template,
+                      caso.titulo.devedor.telefones?.[0] ?? 'desconhecido', conteudo)
+                  }
+                  onEnviarEmail={(template, destinatario, conteudo) =>
+                    registrarComunicacao('EMAIL', template, destinatario, conteudo)
+                  }
+                  onRegistrarEvento={(tipo, descricao) => registrarEvento(tipo, descricao)}
+                  onSalvarPDF={(nome, url) => salvarDocumentoPDF(nome, url)}
+                />
+              </div>
+            )}
+
+            {/* TIMELINE */}
+            {abaAtiva === 'timeline' && (
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock size={15} style={{ color: '#B89C5C' }} />
+                  <span className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
+                    Timeline do Caso
+                  </span>
+                  <span className="ml-auto font-montserrat text-xs" style={{ color: '#9B9B9B' }}>
+                    {eventos.length} evento{eventos.length !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <TimelineCaso eventos={eventos} />
+              </div>
+            )}
+
+            {/* PAGAMENTOS */}
+            {abaAtiva === 'pagamentos' && (
+              <PainelPagamento caso={caso} />
+            )}
+
+            {/* PROTESTO / NEGATIVAÇÃO */}
+            {abaAtiva === 'protesto' && (
+              <PainelProtestoNegativacao
+                caso_id={caso.id}
+                etapa_atual={caso.etapa_atual}
+                valor_atual={caso.titulo.valor_atualizado}
+                devedor_id={caso.titulo.devedor.id}
+              />
+            )}
+
+            {/* LGPD */}
+            {abaAtiva === 'lgpd' && (
+              <PainelLGPD devedor_id={caso.titulo.devedor.id} />
+            )}
+
+            {/* DOCUMENTOS */}
+            {abaAtiva === 'documentos' && (
+              <div>
+                <div className="px-5 py-3.5 flex items-center gap-2"
+                  style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
+                  <FileText size={15} style={{ color: '#B89C5C' }} />
+                  <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
+                    Documentos
+                  </h3>
+                </div>
+                <div className="divide-y" style={{ '--tw-divide-color': '#E2D9C8' } as React.CSSProperties}>
+                  {documentos.length === 0 ? (
+                    <p className="px-5 py-6 text-center font-lato text-sm" style={{ color: '#9B9B9B' }}>
+                      Nenhum documento anexado.
+                    </p>
+                  ) : documentos.map(doc => (
+                    <div key={doc.id} className="flex items-center gap-3 px-5 py-3">
+                      <FileText size={16} style={{ color: '#B89C5C', flexShrink: 0 }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="font-lato text-sm truncate" style={{ color: '#1A1A1A' }}>
+                          {doc.nome_arquivo}
+                        </p>
+                        <p className="font-lato text-[10px]" style={{ color: '#9B9B9B' }}>
+                          {doc.tipo_documento} · {format(parseISO(doc.data_upload), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                        </p>
+                      </div>
+                      <a href={doc.url_storage} target="_blank" rel="noreferrer"
+                        className="p-1.5 rounded border transition-colors hover:border-[#B89C5C]"
+                        style={{ borderColor: '#E2D9C8', color: '#9B9B9B' }}>
+                        <Download size={14} />
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Mini-Kanban de Tarefas — mantido abaixo das abas */}
+          <div className="bg-white rounded-lg border shadow-sm mt-5" style={{ borderColor: '#E2D9C8' }}>
             <div className="px-5 py-3.5 flex items-center gap-2"
               style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
               <CheckCircle2 size={15} style={{ color: '#B89C5C' }} />
