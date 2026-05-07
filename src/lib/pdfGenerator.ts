@@ -10,18 +10,19 @@ import { formatarMoeda } from './utils'
 import type { CasoCompleto } from '@/hooks/cobranca/useFichaCaso'
 
 const CORES = {
-  vinho:  [90,  30,  42]  as [number, number, number],
-  ouro:   [184, 156, 92]  as [number, number, number],
-  navy:   [13,  27,  42]  as [number, number, number],
+  vinho:  [90,  18,  32]  as [number, number, number],
+  ouro:   [183, 154, 90]  as [number, number, number],
+  navy:   [14,  27,  42]  as [number, number, number],
   texto:  [26,  26,  26]  as [number, number, number],
   cinza:  [107, 107, 107] as [number, number, number],
   borda:  [226, 217, 200] as [number, number, number],
 }
 
 const ESCRITORIO = {
-  nome:      'ANDRADE & CINTRA ADVOGADOS',
-  subtitulo: 'Gestão de Cobranças e Execuções Judiciais',
-  email:     'jgac@cintraadvogados.com.br',
+  nome:      'VINDEX — ANDRADE & CINTRA ADVOGADOS',
+  subtitulo: 'A Legal Desk da A&C Advogados',
+  tagline:   'Direito que Recupera. Estratégia que Protege.',
+  email:     'jgac@cintraadvogados.com',
   site:      'www.andradecintra.com.br',
   telefone:  '(11) 99607-1463',
   cidade:    'São Paulo/SP',
@@ -61,6 +62,88 @@ function par(doc: jsPDF, chave: string, valor: string, x: number, y: number, lar
   return y + 4 + (linhas.length - 1) * 4
 }
 
+export function gerarHeaderPDF(
+  doc: jsPDF,
+  tema: 'escuro' | 'claro',
+  tipoDocumento?: string,
+): void {
+  const pageWidth = doc.internal.pageSize.getWidth()
+
+  if (tema === 'claro') {
+    // Fundo marfim do cabeçalho
+    doc.setFillColor(246, 242, 236)
+    doc.rect(0, 0, pageWidth, 28, 'F')
+
+    // Linha inferior dourada
+    doc.setDrawColor(183, 154, 90)
+    doc.setLineWidth(0.4)
+    doc.line(0, 28, pageWidth, 28)
+
+    // Ícone V (triângulo invertido duplo)
+    const ix = 10, iy = 8
+    doc.setDrawColor(90, 18, 32)
+    doc.setLineWidth(0.8)
+    // V externo
+    doc.line(ix, iy, ix + 7, iy + 11)      // esq → vértice
+    doc.line(ix + 14, iy, ix + 7, iy + 11) // dir → vértice
+    // V interno
+    doc.setLineWidth(0.5)
+    doc.line(ix + 2, iy, ix + 7, iy + 9)
+    doc.line(ix + 12, iy, ix + 7, iy + 9)
+    // Barra superior
+    doc.setLineWidth(0.6)
+    doc.line(ix, iy, ix + 14, iy)
+    // Losango acento
+    doc.setFillColor(183, 154, 90)
+    doc.rect(ix + 6.5, iy + 10.5, 1, 1, 'F')
+
+    // Nome VINDEX
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(14)
+    doc.setTextColor(90, 18, 32)
+    doc.text('VINDEX', 27, iy + 7)
+
+    // Subtítulo
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7)
+    doc.setTextColor(102, 102, 102)
+    doc.text('A Legal Desk da A&C Advogados', 27, iy + 12)
+
+    // Tipo do documento (lado direito)
+    if (tipoDocumento) {
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(8)
+      doc.setTextColor(90, 18, 32)
+      doc.text(tipoDocumento.toUpperCase(), pageWidth - 10, iy + 9, { align: 'right' })
+    }
+  }
+}
+
+export function gerarRodapePDF(doc: jsPDF, paginaAtual: number, totalPaginas: number): void {
+  const pageWidth  = doc.internal.pageSize.getWidth()
+  const pageHeight = doc.internal.pageSize.getHeight()
+  const y = pageHeight - 12
+
+  doc.setDrawColor(183, 154, 90)
+  doc.setLineWidth(0.3)
+  doc.line(10, y - 3, pageWidth - 10, y - 3)
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(7)
+  doc.setTextColor(183, 154, 90)
+  doc.text('DIREITO QUE RECUPERA. ESTRATÉGIA QUE PROTEGE.', pageWidth / 2, y, { align: 'center' })
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(6.5)
+  doc.setTextColor(107, 107, 107)
+  doc.text(
+    'ANDRADE & CINTRA Advogados — VINDEX Legal Desk  |  jgac@cintraadvogados.com  |  (11) 99607-1463  |  www.andradecintra.com.br',
+    pageWidth / 2, y + 4, { align: 'center' },
+  )
+
+  doc.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - 10, y + 4, { align: 'right' })
+}
+
 // ── Exportação principal ──────────────────────────────────────
 export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
@@ -69,34 +152,9 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   const hoje   = new Date()
   const prazo  = addDays(hoje, 15)
 
-  let y = 20
+  gerarHeaderPDF(doc, 'claro', 'Notificação Extrajudicial')
 
-  // ── Cabeçalho ──────────────────────────────────────────────
-  // Escudo A&C (simulado com texto estilizado)
-  doc.setFillColor(...CORES.vinho)
-  doc.roundedRect(20, y, 18, 20, 2, 2, 'F')
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(14)
-  doc.setTextColor(184, 156, 92)
-  doc.text('A', 29, y + 10, { align: 'center' })
-  doc.setFontSize(7)
-  doc.text('&C', 29, y + 16, { align: 'center' })
-
-  // Nome do escritório
-  doc.setFont('helvetica', 'bold')
-  doc.setFontSize(15)
-  setColor(doc, CORES.vinho)
-  doc.text(ESCRITORIO.nome, 42, y + 8)
-
-  doc.setFont('helvetica', 'normal')
-  doc.setFontSize(9)
-  setColor(doc, CORES.cinza)
-  doc.text(ESCRITORIO.subtitulo, 42, y + 14)
-
-  doc.setFontSize(8)
-  doc.text(`${ESCRITORIO.email}  ·  ${ESCRITORIO.telefone}  ·  ${ESCRITORIO.site}`, 42, y + 19)
-
-  y += 26
+  let y = 34
 
   // Linha divisória dourada
   doc.setDrawColor(...CORES.ouro)
@@ -286,20 +344,9 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   setColor(doc, CORES.cinza)
-  doc.text(ESCRITORIO.nome, 105, y, { align: 'center' })
+  doc.text('VINDEX — ANDRADE & CINTRA ADVOGADOS', 105, y, { align: 'center' })
 
-  // Número de página
-  const totalPaginas = doc.getNumberOfPages()
-  for (let i = 1; i <= totalPaginas; i++) {
-    doc.setPage(i)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(7)
-    setColor(doc, CORES.cinza)
-    doc.text(
-      `${ESCRITORIO.nome}  |  ${ESCRITORIO.email}  |  Página ${i} de ${totalPaginas}`,
-      105, 290, { align: 'center' },
-    )
-  }
+  gerarRodapePDF(doc, 1, 1)
 
   return doc.output('arraybuffer') as ArrayBuffer
 }
