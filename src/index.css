@@ -1,0 +1,190 @@
+/* ============================================================
+   ANDRADE & CINTRA ADVOGADOS — Sistema de Cobrança
+   CSS Variables + Tipografia Institucional
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Lato:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   DESIGN TOKENS — Paleta ANDRADE & CINTRA
+   ============================================================ */
+@layer base {
+  :root {
+    /* Paleta institucional */
+    --ac-vinho:  #5A1E2A;
+    --ac-ouro:   #B89C5C;
+    --ac-navy:   #0D1B2A;
+    --ac-cinza:  #C0C0C0;
+    --ac-branco: #F5F5F5;
+    --ac-fundo:  #FAFAF8;
+    --ac-texto:  #1A1A1A;
+    --ac-borda:  #E2D9C8;
+
+    /* shadcn/ui tokens mapeados para paleta AC */
+    --background:   0 0% 98%;
+    --foreground:   0 0% 10%;
+    --card:         0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover:      0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary:      350 51% 23%;    /* ac-vinho */
+    --primary-foreground: 0 0% 96%;
+    --secondary:    38 36% 53%;     /* ac-ouro */
+    --secondary-foreground: 0 0% 100%;
+    --muted:        0 0% 75%;
+    --muted-foreground: 0 0% 40%;
+    --accent:       38 36% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive:  0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border:       38 24% 84%;     /* ac-borda */
+    --input:        38 24% 84%;
+    --ring:         350 51% 23%;
+    --radius:       0.375rem;
+  }
+}
+
+/* ============================================================
+   RESET E BASE
+   ============================================================ */
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-ac-fundo text-ac-texto;
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2 {
+    font-family: 'Cinzel', serif;
+  }
+
+  h3, h4, label, .label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+}
+
+/* ============================================================
+   COMPONENTES REUTILIZÁVEIS
+   ============================================================ */
+@layer components {
+
+  /* Botão primário institucional */
+  .btn-ac-primary {
+    @apply bg-ac-vinho text-white font-montserrat font-semibold px-6 py-2.5 rounded
+           transition-colors duration-200 hover:bg-ac-ouro focus:ring-2 focus:ring-ac-ouro
+           focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Botão secundário */
+  .btn-ac-secondary {
+    @apply border border-ac-borda text-ac-texto bg-white font-montserrat font-medium
+           px-6 py-2.5 rounded transition-colors duration-200 hover:bg-ac-branco
+           focus:ring-2 focus:ring-ac-borda focus:ring-offset-2;
+  }
+
+  /* Card institucional */
+  .card-ac {
+    @apply bg-white border border-ac-borda rounded shadow-sm;
+  }
+
+  /* Tabela com listras */
+  .table-ac tbody tr:nth-child(even) {
+    @apply bg-ac-branco;
+  }
+
+  .table-ac tbody tr:nth-child(odd) {
+    @apply bg-white;
+  }
+
+  .table-ac th {
+    @apply bg-ac-navy text-white font-montserrat font-semibold text-xs uppercase tracking-wider px-4 py-3;
+  }
+
+  .table-ac td {
+    @apply px-4 py-3 text-sm text-ac-texto border-b border-ac-borda;
+  }
+
+  /* Badge de status */
+  .badge-verde   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800; }
+  .badge-amarelo { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800; }
+  .badge-vermelho{ @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800; }
+  .badge-navy    { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-900 text-blue-100; }
+  .badge-cinza   { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-600; }
+
+  /* Input institucional */
+  .input-ac {
+    @apply w-full border border-ac-borda rounded px-3 py-2 text-sm font-lato bg-white
+           focus:outline-none focus:ring-2 focus:ring-ac-vinho focus:border-transparent
+           placeholder:text-ac-cinza transition-colors;
+  }
+
+  /* Label */
+  .label-ac {
+    @apply block text-xs font-montserrat font-semibold text-ac-texto uppercase tracking-wide mb-1;
+  }
+
+  /* Sidebar link */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-2.5 text-sm font-montserrat font-medium
+           text-ac-cinza rounded transition-colors duration-150 hover:bg-white/10 hover:text-white;
+  }
+
+  .sidebar-link.active {
+    @apply bg-ac-vinho text-white;
+  }
+}
+
+/* ============================================================
+   UTILIDADES AUXILIARES
+   ============================================================ */
+@layer utilities {
+  .font-cinzel      { font-family: 'Cinzel', serif; }
+  .font-montserrat  { font-family: 'Montserrat', sans-serif; }
+  .font-lato        { font-family: 'Lato', sans-serif; }
+
+  .text-ac-vinho  { color: var(--ac-vinho); }
+  .text-ac-ouro   { color: var(--ac-ouro); }
+  .text-ac-navy   { color: var(--ac-navy); }
+
+  .bg-ac-vinho    { background-color: var(--ac-vinho); }
+  .bg-ac-ouro     { background-color: var(--ac-ouro); }
+  .bg-ac-navy     { background-color: var(--ac-navy); }
+  .bg-ac-fundo    { background-color: var(--ac-fundo); }
+  .bg-ac-branco   { background-color: var(--ac-branco); }
+
+  .border-ac-borda { border-color: var(--ac-borda); }
+  .border-ac-vinho { border-color: var(--ac-vinho); }
+  .border-ac-ouro  { border-color: var(--ac-ouro); }
+
+  /* Divider dourado decorativo */
+  .divider-ouro {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--ac-ouro), transparent);
+  }
+
+  /* Ornamento tipográfico */
+  .ornamento-ouro {
+    color: var(--ac-ouro);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.15em;
+  }
+}
+
+/* ============================================================
+   SCROLLBAR PERSONALIZADA
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--ac-fundo); }
+::-webkit-scrollbar-thumb { background: var(--ac-borda); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--ac-cinza); }
