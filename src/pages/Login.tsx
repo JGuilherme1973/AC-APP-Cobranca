@@ -1,17 +1,18 @@
 /**
  * Login.tsx — Tela de autenticação institucional
- * ANDRADE & CINTRA Advogados | Sistema de Cobranças
+ * VINDEX | Sistema de Cobranças
  *
- * Identidade visual: fundo navy (#0D1B2A), logotipo A&C,
+ * Identidade visual VINDEX: fundo navy (#0E1B2A / #06101a),
  * tipografia Cinzel (títulos), Montserrat (labels), Lato (corpo).
  */
 
 import { useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, Lock, Mail, AlertCircle, Scale } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/hooks/auth/useAuth'
 import VerificarMFA from '@/components/auth/VerificarMFA'
 import ConfigurarMFA from '@/components/auth/ConfigurarMFA'
+import VindexLogo from '@/components/brand/VindexLogo'
 
 interface FormState {
   email: string
@@ -19,72 +20,6 @@ interface FormState {
   loading: boolean
   error: string | null
   showPassword: boolean
-}
-
-// Escudo SVG — brasão estilizado A&C
-function LogoAC() {
-  return (
-    <svg
-      viewBox="0 0 120 140"
-      className="w-24 h-28"
-      aria-label="ANDRADE & CINTRA Advogados"
-      role="img"
-    >
-      {/* Fundo do escudo */}
-      <path
-        d="M60 4 L112 28 L112 84 Q112 120 60 136 Q8 120 8 84 L8 28 Z"
-        fill="#5A1E2A"
-        stroke="#B89C5C"
-        strokeWidth="2"
-      />
-      {/* Traço interno do escudo */}
-      <path
-        d="M60 14 L102 34 L102 82 Q102 112 60 126 Q18 112 18 82 L18 34 Z"
-        fill="none"
-        stroke="#B89C5C"
-        strokeWidth="1"
-        opacity="0.5"
-      />
-      {/* Letras A&C */}
-      <text
-        x="60"
-        y="72"
-        textAnchor="middle"
-        fontFamily="'Cinzel', serif"
-        fontSize="36"
-        fontWeight="700"
-        fill="#B89C5C"
-        letterSpacing="2"
-      >
-        A
-      </text>
-      <text
-        x="60"
-        y="100"
-        textAnchor="middle"
-        fontFamily="'Cinzel', serif"
-        fontSize="16"
-        fontWeight="400"
-        fill="#B89C5C"
-        letterSpacing="3"
-      >
-        &amp; C
-      </text>
-      {/* Ornamento inferior */}
-      <line x1="34" y1="108" x2="86" y2="108" stroke="#B89C5C" strokeWidth="0.5" opacity="0.6" />
-    </svg>
-  )
-}
-
-// Separador decorativo dourado
-function DividerOuro() {
-  return (
-    <div className="flex items-center gap-3 w-full">
-      <div className="flex-1 h-px bg-gradient-to-r from-transparent to-[#B89C5C] opacity-40" />
-      <Scale size={14} className="text-[#B89C5C] opacity-60 flex-shrink-0" />
-      <div className="flex-1 h-px bg-gradient-to-l from-transparent to-[#B89C5C] opacity-40" />
-    </div>
-  )
 }
 
 export default function Login() {
@@ -97,6 +32,9 @@ export default function Login() {
     error: null,
     showPassword: false,
   })
+
+  const [emailFocused, setEmailFocused] = useState(false)
+  const [passwordFocused, setPasswordFocused] = useState(false)
 
   const handleChange = useCallback(
     (field: keyof Pick<FormState, 'email' | 'password'>) =>
@@ -172,139 +110,124 @@ export default function Login() {
   }
 
   return (
-    <div
-      className="min-h-screen flex"
-      style={{ backgroundColor: '#0D1B2A' }}
-    >
-      {/* ── Painel esquerdo — Branding ─────────────────────────── */}
+    <div className="min-h-screen flex flex-col md:flex-row">
+
+      {/* ── COLUNA ESQUERDA — Branding (60%) ─────────────────── */}
       <div
-        className="hidden lg:flex lg:w-5/12 xl:w-1/2 flex-col items-center justify-center px-12 relative overflow-hidden"
-        style={{ backgroundColor: '#0D1B2A' }}
+        className="hidden md:flex md:w-3/5 flex-col relative"
+        style={{ backgroundColor: '#0E1B2A' }}
         aria-hidden="true"
       >
-        {/* Textura de fundo sutil */}
+        {/* Linha vertical dourada decorativa — borda direita */}
         <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, #B89C5C 1px, transparent 0)`,
-            backgroundSize: '32px 32px',
-          }}
+          className="absolute right-0 top-0 bottom-0 w-px"
+          style={{ background: 'linear-gradient(to bottom, transparent, rgba(183,154,90,0.3), transparent)' }}
         />
 
-        {/* Linha vertical dourada decorativa */}
-        <div
-          className="absolute right-0 top-0 bottom-0 w-px opacity-20"
-          style={{ background: 'linear-gradient(to bottom, transparent, #B89C5C, transparent)' }}
-        />
+        {/* Centro: logo + tagline */}
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <VindexLogo variant="vertical" theme="dark" size="xl" />
 
-        <div className="relative z-10 text-center max-w-sm">
-          {/* Logo */}
-          <div className="flex justify-center mb-8">
-            <LogoAC />
-          </div>
+          {/* Linha dourada decorativa */}
+          <div
+            style={{
+              width: 160,
+              height: 1,
+              backgroundColor: '#B79A5A',
+              marginTop: 32,
+            }}
+          />
 
-          {/* Nome do escritório */}
-          <h1
-            className="text-3xl font-cinzel font-bold tracking-widest mb-2"
-            style={{ color: '#B89C5C' }}
-          >
-            ANDRADE
-          </h1>
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="h-px w-8 opacity-40" style={{ backgroundColor: '#B89C5C' }} />
-            <span className="font-cinzel text-sm tracking-[0.4em] opacity-60" style={{ color: '#B89C5C' }}>
-              &amp;
-            </span>
-            <div className="h-px w-8 opacity-40" style={{ backgroundColor: '#B89C5C' }} />
-          </div>
-          <h1
-            className="text-3xl font-cinzel font-bold tracking-widest mb-6"
-            style={{ color: '#B89C5C' }}
-          >
-            CINTRA
-          </h1>
-
+          {/* Tagline */}
           <p
-            className="font-montserrat text-xs font-medium tracking-[0.25em] uppercase mb-10 opacity-50"
-            style={{ color: '#C0C0C0' }}
+            style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: 10,
+              letterSpacing: 3,
+              color: '#B79A5A',
+              opacity: 0.7,
+              textAlign: 'center',
+              marginTop: 16,
+            }}
           >
-            Advogados
-          </p>
-
-          <DividerOuro />
-
-          <p
-            className="mt-8 font-lato text-sm leading-relaxed opacity-50"
-            style={{ color: '#C0C0C0' }}
-          >
-            Sistema interno de gestão de cobranças
-            <br />e execuções judiciais.
-          </p>
-
-          {/* OAB */}
-          <p
-            className="mt-6 font-montserrat text-xs tracking-wider opacity-30"
-            style={{ color: '#C0C0C0' }}
-          >
-            OAB/SP — Uso exclusivo do escritório
+            DIREITO QUE RECUPERA. ESTRATÉGIA QUE PROTEGE.
           </p>
         </div>
+
+        {/* Rodapé da coluna */}
+        <p
+          style={{
+            fontFamily: "'Lato', sans-serif",
+            fontWeight: 300,
+            fontSize: 10,
+            color: '#444',
+            textAlign: 'center',
+            paddingBottom: 20,
+          }}
+        >
+          © 2026 ANDRADE &amp; CINTRA Advogados
+        </p>
       </div>
 
-      {/* ── Painel direito — Formulário ────────────────────────── */}
+      {/* ── COLUNA DIREITA — Formulário (40%) ────────────────── */}
       <div
-        className="flex-1 flex flex-col items-center justify-center px-6 sm:px-12 py-12"
-        style={{ backgroundColor: '#0F2033' }}
+        className="flex-1 md:w-2/5 flex flex-col items-center justify-center min-h-screen md:min-h-0"
+        style={{ backgroundColor: '#06101a' }}
       >
-        {/* Logo mobile */}
-        <div className="flex flex-col items-center mb-10 lg:hidden">
-          <LogoAC />
-          <h1
-            className="mt-4 font-cinzel text-xl font-bold tracking-widest"
-            style={{ color: '#B89C5C' }}
-          >
-            ANDRADE &amp; CINTRA
-          </h1>
-          <p className="font-montserrat text-xs mt-1 opacity-40 tracking-wider"
-            style={{ color: '#C0C0C0' }}>
-            Advogados
-          </p>
+        {/* Logo mobile (visível apenas em telas pequenas) */}
+        <div className="md:hidden flex flex-col items-center" style={{ paddingTop: 48, marginBottom: 32 }}>
+          <VindexLogo variant="vertical" theme="dark" size="lg" />
         </div>
 
-        {/* Card do formulário */}
+        {/* Card de login */}
         <div
-          className="w-full max-w-md rounded-lg shadow-2xl overflow-hidden"
-          style={{ backgroundColor: '#FAFAF8' }}
+          className="w-full mx-auto"
+          style={{
+            background: '#0a1420',
+            border: '1px solid rgba(183,154,90,0.2)',
+            borderRadius: 12,
+            padding: '40px 36px',
+            maxWidth: 360,
+            margin: '0 20px',
+          }}
         >
-          {/* Cabeçalho do card */}
-          <div
-            className="px-8 pt-8 pb-6"
-            style={{ borderBottom: '1px solid #E2D9C8' }}
+          {/* Título */}
+          <h2
+            style={{
+              fontFamily: "'Cinzel', serif",
+              fontSize: 18,
+              color: '#F6F2EC',
+              marginBottom: 8,
+              margin: 0,
+            }}
           >
-            <h2
-              className="font-cinzel text-xl font-semibold"
-              style={{ color: '#5A1E2A' }}
-            >
-              Acesso ao Sistema
-            </h2>
-            <p
-              className="mt-1 font-lato text-sm"
-              style={{ color: '#6B6B6B' }}
-            >
-              Insira suas credenciais para continuar.
-            </p>
-          </div>
+            Entrar no VINDEX
+          </h2>
 
-          {/* Corpo do formulário */}
-          <form onSubmit={handleSubmit} noValidate className="px-8 pt-6 pb-8">
+          {/* Subtítulo */}
+          <p
+            style={{
+              fontFamily: "'Lato', sans-serif",
+              fontWeight: 300,
+              fontSize: 12,
+              color: '#666',
+              marginBottom: 32,
+              marginTop: 8,
+            }}
+          >
+            Acesso restrito — escritório interno
+          </p>
+
+          <form onSubmit={handleSubmit} noValidate>
             {/* Alerta de erro */}
             {form.error && (
               <div
-                className="flex items-start gap-3 rounded px-4 py-3 mb-5 text-sm font-lato"
+                className="flex items-start gap-3 rounded px-4 py-3 mb-5 text-sm"
                 style={{
-                  backgroundColor: '#FEF2F2',
-                  border: '1px solid #FECACA',
-                  color: '#991B1B',
+                  backgroundColor: 'rgba(90,18,32,0.3)',
+                  border: '1px solid rgba(90,18,32,0.6)',
+                  color: '#f87171',
+                  fontFamily: "'Lato', sans-serif",
                 }}
                 role="alert"
               >
@@ -314,20 +237,34 @@ export default function Login() {
             )}
 
             {/* Campo e-mail */}
-            <div className="mb-5">
+            <div style={{ marginBottom: 20 }}>
               <label
                 htmlFor="email"
-                className="block font-montserrat text-xs font-semibold uppercase tracking-wide mb-1.5"
-                style={{ color: '#1A1A1A' }}
+                style={{
+                  display: 'block',
+                  fontFamily: "'Montserrat', sans-serif",
+                  fontSize: 11,
+                  color: '#B79A5A',
+                  letterSpacing: 1,
+                  textTransform: 'uppercase',
+                  marginBottom: 4,
+                }}
               >
                 E-mail
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Mail
-                    size={16}
-                    style={{ color: form.email ? '#5A1E2A' : '#C0C0C0' }}
-                  />
+              <div style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    right: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: 12,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <Mail size={15} style={{ color: form.email ? '#B79A5A' : '#3a4a5a' }} />
                 </div>
                 <input
                   id="email"
@@ -335,46 +272,74 @@ export default function Login() {
                   autoComplete="email"
                   value={form.email}
                   onChange={handleChange('email')}
+                  onFocus={() => setEmailFocused(true)}
+                  onBlur={() => setEmailFocused(false)}
                   placeholder="seu@email.com.br"
                   disabled={form.loading}
-                  className="w-full border rounded pl-9 pr-4 py-2.5 text-sm font-lato
-                             transition-colors disabled:opacity-60 disabled:cursor-not-allowed
-                             focus:outline-none focus:ring-2"
                   style={{
-                    borderColor: form.error ? '#FECACA' : '#E2D9C8',
-                    backgroundColor: '#FFFFFF',
-                    color: '#1A1A1A',
-                    '--tw-ring-color': '#5A1E2A',
-                  } as React.CSSProperties}
+                    background: '#06101a',
+                    border: `1px solid ${emailFocused ? '#B79A5A' : 'rgba(183,154,90,0.2)'}`,
+                    borderRadius: 6,
+                    color: '#F6F2EC',
+                    padding: '12px 14px 12px 36px',
+                    width: '100%',
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: 13,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    opacity: form.loading ? 0.6 : 1,
+                    transition: 'border-color 150ms',
+                  }}
                 />
               </div>
             </div>
 
             {/* Campo senha */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-1.5">
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
                 <label
                   htmlFor="password"
-                  className="font-montserrat text-xs font-semibold uppercase tracking-wide"
-                  style={{ color: '#1A1A1A' }}
+                  style={{
+                    fontFamily: "'Montserrat', sans-serif",
+                    fontSize: 11,
+                    color: '#B79A5A',
+                    letterSpacing: 1,
+                    textTransform: 'uppercase',
+                  }}
                 >
                   Senha
                 </label>
                 <button
                   type="button"
-                  className="font-lato text-xs transition-colors hover:underline"
-                  style={{ color: '#B89C5C' }}
+                  style={{
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: 12,
+                    color: '#666',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    padding: 0,
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = '#B79A5A' }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = '#666' }}
                   tabIndex={-1}
                 >
-                  Esqueci minha senha
+                  Esqueceu a senha?
                 </button>
               </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <Lock
-                    size={16}
-                    style={{ color: form.password ? '#5A1E2A' : '#C0C0C0' }}
-                  />
+              <div style={{ position: 'relative' }}>
+                <div
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    right: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingLeft: 12,
+                    pointerEvents: 'none',
+                  }}
+                >
+                  <Lock size={15} style={{ color: form.password ? '#B79A5A' : '#3a4a5a' }} />
                 </div>
                 <input
                   id="password"
@@ -382,28 +347,45 @@ export default function Login() {
                   autoComplete="current-password"
                   value={form.password}
                   onChange={handleChange('password')}
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
                   placeholder="••••••••"
                   disabled={form.loading}
-                  className="w-full border rounded pl-9 pr-10 py-2.5 text-sm font-lato
-                             transition-colors disabled:opacity-60 disabled:cursor-not-allowed
-                             focus:outline-none focus:ring-2"
                   style={{
-                    borderColor: form.error ? '#FECACA' : '#E2D9C8',
-                    backgroundColor: '#FFFFFF',
-                    color: '#1A1A1A',
-                    '--tw-ring-color': '#5A1E2A',
-                  } as React.CSSProperties}
+                    background: '#06101a',
+                    border: `1px solid ${passwordFocused ? '#B79A5A' : 'rgba(183,154,90,0.2)'}`,
+                    borderRadius: 6,
+                    color: '#F6F2EC',
+                    padding: '12px 40px 12px 36px',
+                    width: '100%',
+                    fontFamily: "'Lato', sans-serif",
+                    fontSize: 13,
+                    outline: 'none',
+                    boxSizing: 'border-box',
+                    opacity: form.loading ? 0.6 : 1,
+                    transition: 'border-color 150ms',
+                  }}
                 />
                 <button
                   type="button"
                   onClick={toggleShowPassword}
                   disabled={form.loading}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3
-                             transition-colors hover:opacity-80 disabled:opacity-40"
-                  style={{ color: '#C0C0C0' }}
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    left: 'auto',
+                    display: 'flex',
+                    alignItems: 'center',
+                    paddingRight: 12,
+                    color: '#3a4a5a',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    opacity: form.loading ? 0.4 : 1,
+                  }}
                   aria-label={form.showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
-                  {form.showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  {form.showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                 </button>
               </div>
             </div>
@@ -412,40 +394,52 @@ export default function Login() {
             <button
               type="submit"
               disabled={form.loading}
-              className="w-full rounded py-3 text-sm font-montserrat font-semibold tracking-wide
-                         text-white transition-all duration-200 disabled:cursor-not-allowed
-                         focus:outline-none focus:ring-2 focus:ring-offset-2"
               style={{
-                backgroundColor: form.loading ? '#8B3A47' : '#5A1E2A',
-                '--tw-ring-color': '#5A1E2A',
-              } as React.CSSProperties}
+                background: form.loading ? '#8B3A47' : '#5A1220',
+                color: '#F6F2EC',
+                fontFamily: "'Montserrat', sans-serif",
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: 2,
+                borderRadius: 6,
+                padding: 14,
+                width: '100%',
+                border: 'none',
+                cursor: form.loading ? 'not-allowed' : 'pointer',
+                transition: 'background 200ms, color 200ms',
+              }}
               onMouseEnter={e => {
                 if (!form.loading) {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C'
+                  const el = e.currentTarget as HTMLButtonElement
+                  el.style.background = '#B79A5A'
+                  el.style.color = '#0E1B2A'
                 }
               }}
               onMouseLeave={e => {
                 if (!form.loading) {
-                  (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A'
+                  const el = e.currentTarget as HTMLButtonElement
+                  el.style.background = '#5A1220'
+                  el.style.color = '#F6F2EC'
                 }
               }}
             >
               {form.loading ? (
-                <span className="flex items-center justify-center gap-2">
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
                   <svg
-                    className="animate-spin h-4 w-4"
+                    className="animate-spin"
+                    style={{ width: 16, height: 16 }}
                     viewBox="0 0 24 24"
                     fill="none"
                     aria-hidden="true"
                   >
                     <circle
-                      className="opacity-25"
+                      style={{ opacity: 0.25 }}
                       cx="12" cy="12" r="10"
                       stroke="currentColor"
                       strokeWidth="4"
                     />
                     <path
-                      className="opacity-75"
+                      style={{ opacity: 0.75 }}
                       fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
@@ -453,37 +447,14 @@ export default function Login() {
                   Autenticando...
                 </span>
               ) : (
-                'Entrar no Sistema'
+                'ENTRAR'
               )}
             </button>
-
-            {/* Nota de segurança */}
-            <p
-              className="mt-5 text-center font-lato text-xs opacity-50"
-              style={{ color: '#6B6B6B' }}
-            >
-              Acesso restrito a usuários autorizados do escritório.
-              <br />
-              Sessões inativas expiram em 8 horas.
-            </p>
           </form>
         </div>
 
-        {/* Rodapé */}
-        <div className="mt-8 text-center">
-          <p
-            className="font-lato text-xs opacity-30"
-            style={{ color: '#C0C0C0' }}
-          >
-            © {new Date().getFullYear()} ANDRADE &amp; CINTRA Advogados — Todos os direitos reservados
-          </p>
-          <p
-            className="mt-1 font-lato text-xs opacity-20"
-            style={{ color: '#C0C0C0' }}
-          >
-            jgac@cintraadvogados.com.br · OAB/SP
-          </p>
-        </div>
+        {/* Padding inferior mobile */}
+        <div style={{ height: 40 }} className="md:hidden" />
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 /**
  * AppLayout — Estrutura principal com sidebar institucional e header.
- * Usado em todas as rotas autenticadas do sistema A&C.
+ * Identidade visual VINDEX.
  */
 
 import { useState, useEffect } from 'react'
@@ -18,10 +18,11 @@ import {
   Settings,
   LogOut,
   Menu,
-  Scale,
   ChevronRight,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import VindexLogo from '@/components/brand/VindexLogo'
+import VindexIcon from '@/components/brand/VindexIcon'
 
 interface NavItem {
   label: string
@@ -44,45 +45,18 @@ const NAV_ITEMS: NavItem[] = [
 
 function LogoMarca({ collapsed }: { collapsed: boolean }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-5" style={{ borderBottom: '1px solid rgba(184,156,92,0.15)' }}>
-      {/* Escudo miniatura */}
-      <div className="flex-shrink-0">
-        <svg viewBox="0 0 40 48" className="w-8 h-9" aria-hidden="true">
-          <path
-            d="M20 2 L37 10 L37 29 Q37 41 20 46 Q3 41 3 29 L3 10 Z"
-            fill="#5A1E2A"
-            stroke="#B89C5C"
-            strokeWidth="1"
-          />
-          <text
-            x="20" y="30"
-            textAnchor="middle"
-            fontFamily="'Cinzel', serif"
-            fontSize="14"
-            fontWeight="700"
-            fill="#B89C5C"
-          >
-            A
-          </text>
-        </svg>
-      </div>
-
-      {!collapsed && (
-        <div className="overflow-hidden">
-          <p
-            className="font-cinzel text-xs font-bold leading-tight tracking-widest truncate"
-            style={{ color: '#B89C5C' }}
-          >
-            ANDRADE &amp; CINTRA
-          </p>
-          <p
-            className="font-montserrat text-[9px] tracking-[0.2em] uppercase opacity-40 mt-0.5"
-            style={{ color: '#C0C0C0' }}
-          >
-            Sistema de Cobranças
-          </p>
-        </div>
-      )}
+    <div style={{
+      height: 64,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: collapsed ? 'center' : 'flex-start',
+      padding: collapsed ? '0' : '0 16px',
+      borderBottom: '1px solid rgba(183,154,90,0.15)',
+    }}>
+      {collapsed
+        ? <VindexIcon size={28} variant="gold" />
+        : <VindexLogo variant="horizontal" theme="dark" size="sm" />
+      }
     </div>
   )
 }
@@ -106,9 +80,13 @@ function SidebarLink({ item, collapsed, onClick }: SidebarLinkProps) {
           'flex items-center gap-3 mx-2 px-3 py-2.5 rounded text-sm font-montserrat font-medium',
           'transition-all duration-150 group relative',
           isActive
-            ? 'bg-ac-vinho text-white'
-            : 'text-[#8AA3BE] hover:bg-white/8 hover:text-white',
+            ? 'text-[#F6F2EC]'
+            : 'text-[#8a9ab0] hover:text-white',
         ].join(' ')
+      }
+      style={({ isActive }) => isActive
+        ? { borderLeft: '2px solid #B79A5A', backgroundColor: 'rgba(183,154,90,0.12)', color: '#F6F2EC', paddingLeft: 10 }
+        : {}
       }
       title={collapsed ? item.label : undefined}
     >
@@ -116,7 +94,8 @@ function SidebarLink({ item, collapsed, onClick }: SidebarLinkProps) {
         <>
           <Icon
             size={17}
-            className={`flex-shrink-0 ${isActive ? 'text-[#B89C5C]' : 'opacity-70 group-hover:opacity-100'}`}
+            className="flex-shrink-0"
+            style={{ color: isActive ? '#B79A5A' : undefined, opacity: isActive ? 1 : 0.7 }}
           />
           {!collapsed && (
             <span className="truncate">{item.label}</span>
@@ -124,7 +103,7 @@ function SidebarLink({ item, collapsed, onClick }: SidebarLinkProps) {
           {!collapsed && item.badge !== undefined && item.badge > 0 && (
             <span
               className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center"
-              style={{ backgroundColor: '#5A1E2A', color: '#F5F5F5' }}
+              style={{ backgroundColor: '#5A1220', color: '#F5F5F5' }}
             >
               {item.badge}
             </span>
@@ -135,7 +114,7 @@ function SidebarLink({ item, collapsed, onClick }: SidebarLinkProps) {
               className="absolute left-full ml-2 px-2 py-1 text-xs font-medium rounded whitespace-nowrap
                          opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50
                          shadow-lg"
-              style={{ backgroundColor: '#1A2E42', color: '#F5F5F5', border: '1px solid rgba(184,156,92,0.2)' }}
+              style={{ backgroundColor: '#1A2E42', color: '#F5F5F5', border: '1px solid rgba(183,154,90,0.2)' }}
             >
               {item.label}
               <ChevronRight size={10} className="inline ml-1 opacity-50" />
@@ -185,7 +164,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const sidebarWidth = collapsed ? 'w-16' : 'w-60'
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#FAFAF8' }}>
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: '#F6F2EC' }}>
 
       {/* ── Overlay mobile ─────────────────────────────────── */}
       {mobileOpen && (
@@ -225,12 +204,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </nav>
 
         {/* Rodapé da sidebar */}
-        <div style={{ borderTop: '1px solid rgba(184,156,92,0.12)' }} className="py-3">
+        <div style={{ borderTop: '1px solid rgba(183,154,90,0.12)' }} className="py-3">
           {/* Configurações */}
           <NavLink
             to="/cobranca/configuracoes"
             className="flex items-center gap-3 mx-2 px-3 py-2 rounded text-sm font-montserrat
-                       font-medium text-[#8AA3BE] hover:bg-white/8 hover:text-white
+                       font-medium text-[#8a9ab0] hover:bg-white/8 hover:text-white
                        transition-colors group"
           >
             <Settings size={17} className="flex-shrink-0 opacity-70 group-hover:opacity-100" />
@@ -247,15 +226,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 <div
                   className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0
                              font-montserrat font-bold text-xs"
-                  style={{ backgroundColor: '#5A1E2A', color: '#B89C5C' }}
+                  style={{ backgroundColor: '#5A1220', color: '#B79A5A' }}
                 >
                   {userName[0]?.toUpperCase()}
                 </div>
-                <span className="text-xs font-montserrat text-[#8AA3BE] truncate">{userName}</span>
+                <span className="text-xs font-montserrat text-[#8a9ab0] truncate">{userName}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="text-[#8AA3BE] hover:text-red-400 transition-colors p-1 rounded"
+                className="text-[#8a9ab0] hover:text-red-400 transition-colors p-1 rounded"
                 aria-label="Sair do sistema"
                 title="Sair"
               >
@@ -267,7 +246,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           {collapsed && (
             <button
               onClick={handleLogout}
-              className="flex items-center justify-center w-full py-2 text-[#8AA3BE]
+              className="flex items-center justify-center w-full py-2 text-[#8a9ab0]
                          hover:text-red-400 transition-colors"
               aria-label="Sair"
               title="Sair"
@@ -282,7 +261,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           onClick={() => setCollapsed(prev => !prev)}
           className="hidden lg:flex absolute -right-3 top-20 w-6 h-6 rounded-full
                      items-center justify-center shadow-md transition-colors"
-          style={{ backgroundColor: '#0D1B2A', border: '1px solid rgba(184,156,92,0.3)', color: '#B89C5C' }}
+          style={{ backgroundColor: '#0D1B2A', border: '1px solid rgba(183,154,90,0.3)', color: '#B79A5A' }}
           aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
         >
           <ChevronRight
@@ -298,38 +277,35 @@ export default function AppLayout({ children }: AppLayoutProps) {
         {/* Header */}
         <header
           className="flex-shrink-0 flex items-center justify-between px-4 lg:px-6 h-14 shadow-sm z-20"
-          style={{ backgroundColor: '#0D1B2A', borderBottom: '1px solid rgba(184,156,92,0.15)' }}
+          style={{ backgroundColor: '#0D1B2A', borderBottom: '1px solid rgba(183,154,90,0.15)' }}
         >
           {/* Botão menu mobile */}
           <button
             onClick={() => setMobileOpen(true)}
-            className="lg:hidden p-2 rounded text-[#8AA3BE] hover:text-white"
+            className="lg:hidden p-2 rounded text-[#8a9ab0] hover:text-white"
             aria-label="Abrir menu"
           >
             <Menu size={20} />
           </button>
 
-          {/* Breadcrumb / título da página — injetado via data-attr ou slot */}
+          {/* Marca no header */}
           <div className="flex items-center gap-2">
-            <Scale size={14} className="opacity-40" style={{ color: '#B89C5C' }} />
-            <span
-              className="font-cinzel text-sm font-semibold tracking-wider hidden sm:block"
-              style={{ color: '#B89C5C', opacity: 0.8 }}
-            >
-              ANDRADE &amp; CINTRA
+            <VindexIcon size={14} variant="gold" />
+            <span style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: '#B79A5A', letterSpacing: 3, opacity: 0.8 }}>
+              VINDEX
             </span>
           </div>
 
           {/* Direita: nome usuário */}
           {userName && (
             <div className="flex items-center gap-2">
-              <span className="font-montserrat text-xs text-[#8AA3BE] hidden sm:block">
+              <span className="font-montserrat text-xs text-[#8a9ab0] hidden sm:block">
                 Olá, {userName}
               </span>
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center
                            font-montserrat font-bold text-xs"
-                style={{ backgroundColor: '#5A1E2A', color: '#B89C5C' }}
+                style={{ backgroundColor: '#5A1220', color: '#B79A5A' }}
               >
                 {userName[0]?.toUpperCase()}
               </div>
@@ -338,7 +314,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </header>
 
         {/* Conteúdo */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-6" style={{ backgroundColor: '#FAFAF8' }}>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6" style={{ backgroundColor: '#F6F2EC' }}>
           {children}
         </main>
       </div>
