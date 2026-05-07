@@ -12,10 +12,8 @@
  *   cancelarProtesto   → cancela no gateway e no DB
  *   monitorarStatus    → consulta status atual no gateway
  *
- * NOTA DE SEGURANÇA: Em produção, as chamadas à API do e-Protesto devem ser
- * migradas para uma Supabase Edge Function para que as credenciais (API Key)
- * não fiquem expostas no bundle do frontend. Por ora usam VITE_EPROTESTO_*
- * apenas em ambiente de desenvolvimento/staging.
+ * SEGURANÇA: Todas as chamadas à API do e-Protesto passam pela Edge Function
+ * proxy-eprotesto. A EPROTESTO_API_KEY nunca é exposta no bundle do frontend.
  */
 
 import { supabase } from '@/lib/supabase'
@@ -119,10 +117,7 @@ async function registrarAuditoria(
   })
 }
 
-function isStubMode(): boolean {
-  const key = import.meta.env.VITE_EPROTESTO_API_KEY as string | undefined
-  return !key || key.trim() === ''
-}
+// Stub mode is now handled server-side in proxy-eprotesto Edge Function
 
 // ── Funções públicas ──────────────────────────────────────────
 
@@ -317,64 +312,49 @@ export async function enviarParaCartorio(protesto_id: string): Promise<CartorioR
     let id_gateway: string
     let pdf_url_gateway: string | undefined
 
-    if (isStubMode()) {
-      console.warn('[STUB] e-Protesto não configurado — simulando resposta')
-      numero_protocolo = `STUB-PROT-${Date.now()}`
-      id_gateway = `stub-${protesto_id.slice(0, 8)}`
-      pdf_url_gateway = undefined
-    } else {
-      const apiUrl = import.meta.env.VITE_EPROTESTO_API_URL as string
-      const apiKey = import.meta.env.VITE_EPROTESTO_API_KEY as string
+    const { data: eprData, error: eprError } = await supabase.functions.invoke('proxy-eprotesto', {
+      body: {
+        action: 'enviar_titulo',
+        protesto_id: protesto.id,
+        caso_id: protesto.caso_id,
+        valor: protesto.valor,
+        tipo_titulo: protesto.tipo_titulo,
+        data_solicitacao: protesto.data_solicitacao,
+      },
+    })
 
-      const response = await fetch(`${apiUrl}/titulos`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
-          protesto_id: protesto.id,
-          caso_id: protesto.caso_id,
-          valor: protesto.valor,
-          tipo_titulo: protesto.tipo_titulo,
-          data_solicitacao: protesto.data_solicitacao,
-        }),
-      })
-
-      if (!response.ok) {
-        const errBody = await response.text().catch(() => response.statusText)
-        // Manter status='solicitado' e notificar advogado
-        await supabase.functions.invoke('enviar-email', {
-          body: {
-            subject: `Falha ao enviar protesto ao cartório — Caso ${protesto.caso_id}`,
-            template: 'protesto_falha_envio',
-            vars: {
-              caso_id: protesto.caso_id,
-              protesto_id,
-              erro: errBody,
-            },
+    if (eprError) {
+      const errMsg = eprError.message
+      // Manter status='solicitado' e notificar advogado
+      await supabase.functions.invoke('enviar-email', {
+        body: {
+          subject: `Falha ao enviar protesto ao cartório — Caso ${protesto.caso_id}`,
+          template: 'protesto_falha_envio',
+          vars: {
+            caso_id: protesto.caso_id,
+            protesto_id,
+            erro: errMsg,
           },
-        }).catch(e => console.warn('[enviarParaCartorio] Edge Function e-mail indisponível:', e))
+        },
+      }).catch(e => console.warn('[enviarParaCartorio] Edge Function e-mail indisponível:', e))
 
-        await registrarEventoTimeline(
-          protesto.caso_id,
-          'PROTESTO_ERRO',
-          `Falha ao enviar protesto ao cartório: ${errBody}`,
-        )
+      await registrarEventoTimeline(
+        protesto.caso_id,
+        'PROTESTO_ERRO',
+        `Falha ao enviar protesto ao cartório: ${errMsg}`,
+      )
 
-        return { sucesso: false, erro: errBody }
-      }
-
-      const data = await response.json() as {
-        numero_protocolo?: string
-        id?: string
-        id_gateway?: string
-        pdf_url?: string
-      }
-      numero_protocolo = data.numero_protocolo ?? `PROT-${Date.now()}`
-      id_gateway = data.id ?? data.id_gateway ?? `gw-${protesto_id.slice(0, 8)}`
-      pdf_url_gateway = data.pdf_url
+      return { sucesso: false, erro: errMsg }
     }
+
+    const eprResult = eprData as {
+      numero_protocolo?: string
+      id_gateway?: string
+      pdf_url?: string
+    }
+    numero_protocolo = eprResult.numero_protocolo ?? `PROT-${Date.now()}`
+    id_gateway = eprResult.id_gateway ?? `gw-${protesto_id.slice(0, 8)}`
+    pdf_url_gateway = eprResult.pdf_url
 
     // Upload do PDF para o Storage se disponível
     let pdf_url_storage: string | undefined
@@ -413,7 +393,7 @@ export async function enviarParaCartorio(protesto_id: string): Promise<CartorioR
         id_gateway,
         data_envio: hoje,
         pdf_url: pdf_url_storage ?? pdf_url_gateway ?? null,
-        resposta_gateway: isStubMode() ? { stub: true } : { numero_protocolo, id_gateway },
+        resposta_gateway: { numero_protocolo, id_gateway },
       })
       .eq('id', protesto_id)
 
@@ -482,24 +462,18 @@ export async function cancelarProtesto(
   }
 
   try {
-    if (!isStubMode() && protesto.id_gateway) {
-      const apiUrl = import.meta.env.VITE_EPROTESTO_API_URL as string
-      const apiKey = import.meta.env.VITE_EPROTESTO_API_KEY as string
-
-      const response = await fetch(`${apiUrl}/titulos/${protesto.id_gateway}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
+    if (protesto.id_gateway) {
+      const { error: eprError } = await supabase.functions.invoke('proxy-eprotesto', {
+        body: {
+          action: 'cancelar_titulo',
+          id_gateway: protesto.id_gateway,
+          motivo,
         },
       })
-
-      if (!response.ok) {
-        const errBody = await response.text().catch(() => response.statusText)
-        console.warn('[cancelarProtesto] Gateway retornou erro:', errBody)
+      if (eprError) {
+        console.warn('[cancelarProtesto] proxy-eprotesto retornou erro:', eprError.message)
         // Continuar mesmo com erro no gateway para manter consistência interna
       }
-    } else if (isStubMode()) {
-      console.warn('[STUB] e-Protesto não configurado — simulando cancelamento')
     }
 
     const hoje = format(new Date(), 'yyyy-MM-dd')
@@ -562,28 +536,20 @@ export async function monitorarStatusProtesto(protesto_id: string): Promise<Stat
     }
   }
 
-  if (isStubMode()) {
-    console.warn('[STUB] e-Protesto não configurado — retornando status do DB')
-    return {
-      status: protesto.status,
-      numero_protocolo: protesto.numero_protocolo ?? undefined,
-    }
-  }
-
   try {
-    const apiUrl = import.meta.env.VITE_EPROTESTO_API_URL as string
-    const apiKey = import.meta.env.VITE_EPROTESTO_API_KEY as string
-
-    const response = await fetch(`${apiUrl}/titulos/${protesto.id_gateway}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
+    const { data: eprData, error: eprError } = await supabase.functions.invoke('proxy-eprotesto', {
+      body: {
+        action: 'status_titulo',
+        id_gateway: protesto.id_gateway,
+      },
     })
 
-    if (!response.ok) {
-      console.warn('[monitorarStatusProtesto] Gateway retornou erro:', response.status)
+    if (eprError) {
+      console.warn('[monitorarStatusProtesto] proxy-eprotesto retornou erro:', eprError.message)
       return { status: protesto.status }
     }
 
-    const data = await response.json() as {
+    const data = eprData as {
       status?: string
       numero_protocolo?: string
       data_atualizacao?: string

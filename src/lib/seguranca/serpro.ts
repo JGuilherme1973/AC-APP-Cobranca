@@ -1,9 +1,13 @@
 /**
  * SERPRO — Validação de CPF e CNPJ
  *
- * Quando as chaves de API não estão configuradas, cai em validação local
- * usando os algoritmos de dígito verificador (mod 11) sem chamada externa.
+ * SEGURANÇA: Todas as chamadas passam pela Edge Function proxy-serpro.
+ * As chaves SERPRO_CPF_API_KEY e SERPRO_CNPJ_API_KEY nunca são expostas
+ * no bundle do frontend. Quando não configuradas no servidor, o proxy
+ * executa validação local por algoritmo mod-11.
  */
+
+import { supabase } from '@/lib/supabase'
 
 export interface SerproValidacao {
   valido: boolean
@@ -13,77 +17,29 @@ export interface SerproValidacao {
   bloqueado?: boolean // true quando situacao = CANCELADO, NULO ou SUSPENSO
 }
 
-const SITUACOES_BLOQUEADORAS = ['CANCELADO', 'NULO', 'SUSPENSO']
-const SITUACOES_ALERTA = ['PENDENTE_REGULARIZACAO', 'IRREGULAR']
-
 // ---------------------------------------------------------------------------
 // 1. Validar CPF
 // ---------------------------------------------------------------------------
 export async function validarCPF(cpf: string): Promise<SerproValidacao> {
   const cpfLimpo = cpf.replace(/\D/g, '')
 
-  const apiKey = import.meta.env.VITE_SERPRO_CPF_API_KEY as string | undefined
-  const apiUrl = import.meta.env.VITE_SERPRO_API_URL as string | undefined
+  const { data, error } = await supabase.functions.invoke('proxy-serpro', {
+    body: { action: 'validar_cpf', cpf: cpfLimpo },
+  })
 
-  // STUB: sem chave configurada — validação apenas por formato
-  if (!apiKey) {
-    console.warn('[STUB] SERPRO não configurado — validação apenas por formato')
-    const valido = validarCPFFormato(cpfLimpo)
-    return {
-      valido,
-      nome: valido ? 'VALIDAÇÃO LOCAL' : undefined,
-      situacao_cadastral: valido ? 'REGULAR' : undefined,
-    }
-  }
-
-  // REAL: consulta SERPRO
-  try {
-    const response = await fetch(
-      `${apiUrl}/consulta-cpf/v0/cpf/${cpfLimpo}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          Accept: 'application/json',
-        },
-      }
-    )
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { valido: false, situacao_cadastral: 'NAO_ENCONTRADO' }
-      }
-      throw new Error(`SERPRO CPF retornou status ${response.status}`)
-    }
-
-    const data = (await response.json()) as {
-      ni?: string
-      nome?: string
-      situacao?: { codigo?: string; descricao?: string }
-    }
-
-    const situacao = data.situacao?.descricao?.toUpperCase() ?? 'DESCONHECIDA'
-    const bloqueado = SITUACOES_BLOQUEADORAS.includes(situacao)
-    const alerta = SITUACOES_ALERTA.includes(situacao) ? `CPF em situação: ${situacao}` : undefined
-
-    return {
-      valido: !bloqueado,
-      nome: data.nome,
-      situacao_cadastral: situacao,
-      alerta,
-      bloqueado,
-    }
-  } catch (err) {
-    // Fallback para validação local em caso de erro de rede
-    console.error('[SERPRO] Erro na consulta de CPF — usando validação local:', err)
+  if (error) {
+    // Fallback para validação de formato local se o proxy falhar
+    console.error('[SERPRO] Erro no proxy — usando validação local:', error.message)
     const valido = validarCPFFormato(cpfLimpo)
     return {
       valido,
       nome: valido ? 'VALIDAÇÃO LOCAL (fallback)' : undefined,
       situacao_cadastral: valido ? 'REGULAR' : undefined,
-      alerta: 'Validação local — SERPRO indisponível',
+      alerta: 'Validação local — proxy-serpro indisponível',
     }
   }
+
+  return data as SerproValidacao
 }
 
 // ---------------------------------------------------------------------------
@@ -92,73 +48,28 @@ export async function validarCPF(cpf: string): Promise<SerproValidacao> {
 export async function validarCNPJ(cnpj: string): Promise<SerproValidacao> {
   const cnpjLimpo = cnpj.replace(/\D/g, '')
 
-  const apiKey = import.meta.env.VITE_SERPRO_CNPJ_API_KEY as string | undefined
-  const apiUrl = import.meta.env.VITE_SERPRO_API_URL as string | undefined
+  const { data, error } = await supabase.functions.invoke('proxy-serpro', {
+    body: { action: 'validar_cnpj', cnpj: cnpjLimpo },
+  })
 
-  // STUB: sem chave configurada — validação apenas por formato
-  if (!apiKey) {
-    console.warn('[STUB] SERPRO não configurado — validação apenas por formato')
-    const valido = validarCNPJFormato(cnpjLimpo)
-    return {
-      valido,
-      nome: valido ? 'VALIDAÇÃO LOCAL' : undefined,
-      situacao_cadastral: valido ? 'ATIVA' : undefined,
-    }
-  }
-
-  // REAL: consulta SERPRO
-  try {
-    const response = await fetch(
-      `${apiUrl}/consulta-cnpj/v0/cnpj/${cnpjLimpo}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          Accept: 'application/json',
-        },
-      }
-    )
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { valido: false, situacao_cadastral: 'NAO_ENCONTRADO' }
-      }
-      throw new Error(`SERPRO CNPJ retornou status ${response.status}`)
-    }
-
-    const data = (await response.json()) as {
-      ni?: string
-      nomeEmpresarial?: string
-      situacaoCadastral?: { codigo?: string; descricao?: string }
-    }
-
-    const situacao = data.situacaoCadastral?.descricao?.toUpperCase() ?? 'DESCONHECIDA'
-    const bloqueado = SITUACOES_BLOQUEADORAS.includes(situacao)
-    const alerta = SITUACOES_ALERTA.includes(situacao)
-      ? `CNPJ em situação: ${situacao}`
-      : undefined
-
-    return {
-      valido: !bloqueado,
-      nome: data.nomeEmpresarial,
-      situacao_cadastral: situacao,
-      alerta,
-      bloqueado,
-    }
-  } catch (err) {
-    console.error('[SERPRO] Erro na consulta de CNPJ — usando validação local:', err)
+  if (error) {
+    // Fallback para validação de formato local se o proxy falhar
+    console.error('[SERPRO] Erro no proxy — usando validação local:', error.message)
     const valido = validarCNPJFormato(cnpjLimpo)
     return {
       valido,
       nome: valido ? 'VALIDAÇÃO LOCAL (fallback)' : undefined,
       situacao_cadastral: valido ? 'ATIVA' : undefined,
-      alerta: 'Validação local — SERPRO indisponível',
+      alerta: 'Validação local — proxy-serpro indisponível',
     }
   }
+
+  return data as SerproValidacao
 }
 
 // ---------------------------------------------------------------------------
 // 3. Validação de formato CPF (algoritmo módulo 11)
+// Mantida para uso como fallback local quando o proxy não responder.
 // ---------------------------------------------------------------------------
 export function validarCPFFormato(cpf: string): boolean {
   const digits = cpf.replace(/\D/g, '')
@@ -191,6 +102,7 @@ export function validarCPFFormato(cpf: string): boolean {
 
 // ---------------------------------------------------------------------------
 // 4. Validação de formato CNPJ (algoritmo módulo 11)
+// Mantida para uso como fallback local quando o proxy não responder.
 // ---------------------------------------------------------------------------
 export function validarCNPJFormato(cnpj: string): boolean {
   const digits = cnpj.replace(/\D/g, '')

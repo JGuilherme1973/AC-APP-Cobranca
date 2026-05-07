@@ -14,10 +14,8 @@
  *   baixarNegativacao          → DELETE na API Serasa → status='baixado'
  *   consultarNegativacao       → GET na API Serasa por CPF/CNPJ
  *
- * NOTA DE SEGURANÇA: Em produção, as chamadas à API do Serasa devem ser
- * migradas para uma Supabase Edge Function para que as credenciais (API Key)
- * não fiquem expostas no bundle do frontend. Por ora usam VITE_SERASA_*
- * apenas em ambiente de desenvolvimento/staging.
+ * SEGURANÇA: Todas as chamadas à API do Serasa passam pela Edge Function
+ * proxy-serasa. A SERASA_API_KEY nunca é exposta no bundle do frontend.
  */
 
 import { supabase } from '@/lib/supabase'
@@ -102,10 +100,7 @@ async function registrarAuditoria(
   })
 }
 
-function isStubMode(): boolean {
-  const key = import.meta.env.VITE_SERASA_API_KEY as string | undefined
-  return !key || key.trim() === ''
-}
+// Stub mode is now handled server-side in proxy-serasa Edge Function
 
 // ── Funções públicas ──────────────────────────────────────────
 
@@ -356,40 +351,25 @@ export async function executarNegativacao(
     .maybeSingle()
 
   const hoje_str = format(new Date(), 'yyyy-MM-dd')
-  let id_bureau: string
 
-  if (isStubMode()) {
-    console.warn('[STUB] Serasa não configurado — simulando negativação')
-    id_bureau = `SERASA-STUB-${Date.now()}`
-  } else {
-    const apiUrl = import.meta.env.VITE_SERASA_API_URL as string
-    const apiKey = import.meta.env.VITE_SERASA_API_KEY as string
+  const { data: serasaData, error: serasaError } = await supabase.functions.invoke('proxy-serasa', {
+    body: {
+      action: 'negativar',
+      cpf_cnpj: (devedor as { cpf_cnpj?: string } | null)?.cpf_cnpj ?? '',
+      nome: (devedor as { nome?: string } | null)?.nome ?? '',
+      valor: negativacao.valor,
+      data_vencimento: negativacao.data_vencimento_original,
+      data_notificacao: negativacao.data_notificacao_previa,
+      negativacao_id,
+      caso_id: negativacao.caso_id,
+    },
+  })
 
-    const response = await fetch(`${apiUrl}/negativacoes`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        cpf_cnpj: (devedor as { cpf_cnpj?: string } | null)?.cpf_cnpj ?? '',
-        nome: (devedor as { nome?: string } | null)?.nome ?? '',
-        valor: negativacao.valor,
-        data_vencimento: negativacao.data_vencimento_original,
-        data_notificacao: negativacao.data_notificacao_previa,
-        negativacao_id,
-        caso_id: negativacao.caso_id,
-      }),
-    })
-
-    if (!response.ok) {
-      const errBody = await response.text().catch(() => response.statusText)
-      throw new Error(`Serasa API retornou erro: ${errBody}`)
-    }
-
-    const data = await response.json() as { id?: string; id_bureau?: string }
-    id_bureau = data.id ?? data.id_bureau ?? `SERASA-${Date.now()}`
+  if (serasaError) {
+    throw new Error(`Serasa proxy retornou erro: ${serasaError.message}`)
   }
+
+  const id_bureau: string = (serasaData as { id_bureau?: string })?.id_bureau ?? `SERASA-${Date.now()}`
 
   // Atualizar status para negativado
   await supabase
@@ -449,26 +429,18 @@ export async function baixarNegativacao(
 
   // Nota legal: CDC Art. 43 §3º — credor tem 5 dias úteis para comunicar baixa após pagamento
   try {
-    if (!isStubMode() && negativacao.id_bureau) {
-      const apiUrl = import.meta.env.VITE_SERASA_API_URL as string
-      const apiKey = import.meta.env.VITE_SERASA_API_KEY as string
-
-      const response = await fetch(`${apiUrl}/negativacoes/${negativacao.id_bureau}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+    if (negativacao.id_bureau) {
+      const { error: serasaError } = await supabase.functions.invoke('proxy-serasa', {
+        body: {
+          action: 'baixar',
+          id_bureau: negativacao.id_bureau,
+          motivo,
         },
-        body: JSON.stringify({ motivo }),
       })
-
-      if (!response.ok) {
-        const errBody = await response.text().catch(() => response.statusText)
-        console.warn('[baixarNegativacao] Serasa retornou erro:', errBody)
+      if (serasaError) {
+        console.warn('[baixarNegativacao] proxy-serasa retornou erro:', serasaError.message)
         // Continuar mesmo com erro no gateway para manter consistência interna
       }
-    } else if (isStubMode()) {
-      console.warn('[STUB] Serasa não configurado — simulando baixa de negativação')
     }
 
     const hoje = format(new Date(), 'yyyy-MM-dd')
@@ -507,34 +479,22 @@ export async function baixarNegativacao(
 }
 
 /**
- * Consulta restrições de um CPF/CNPJ diretamente no Serasa.
- * Em modo STUB retorna lista vazia.
+ * Consulta restrições de um CPF/CNPJ via proxy-serasa Edge Function.
+ * Em modo STUB (sem API key configurada no servidor), retorna lista vazia.
  */
 export async function consultarNegativacao(cpf_cnpj: string): Promise<NegativacaoConsulta> {
-  if (isStubMode()) {
-    console.warn('[STUB] Serasa não configurado — retornando consulta vazia')
-    return { cpf_cnpj, restricoes: [] }
-  }
-
-  const apiUrl = import.meta.env.VITE_SERASA_API_URL as string
-  const apiKey = import.meta.env.VITE_SERASA_API_KEY as string
-
-  const response = await fetch(`${apiUrl}/consultas/${encodeURIComponent(cpf_cnpj)}`, {
-    headers: { Authorization: `Bearer ${apiKey}` },
+  const { data, error } = await supabase.functions.invoke('proxy-serasa', {
+    body: { action: 'consultar', cpf_cnpj },
   })
 
-  if (!response.ok) {
-    const errBody = await response.text().catch(() => response.statusText)
-    throw new Error(`Serasa consulta retornou erro: ${errBody}`)
+  if (error) {
+    throw new Error(`Serasa consulta retornou erro: ${error.message}`)
   }
 
-  const data = await response.json() as {
-    cpf_cnpj?: string
-    restricoes?: RestricaoItem[]
-  }
+  const result = data as { cpf_cnpj?: string; restricoes?: RestricaoItem[] }
 
   return {
-    cpf_cnpj: data.cpf_cnpj ?? cpf_cnpj,
-    restricoes: data.restricoes ?? [],
+    cpf_cnpj: result.cpf_cnpj ?? cpf_cnpj,
+    restricoes: result.restricoes ?? [],
   }
 }
