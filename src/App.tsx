@@ -7,6 +7,7 @@ import Login from '@/pages/Login'
 import AppLayout from '@/components/layout/AppLayout'
 import Dashboard from '@/components/cobranca/Dashboard'
 import NovoCaso from '@/components/cobranca/NovoCaso'
+import FichaCaso from '@/components/cobranca/FichaCaso'
 
 // Guard de rota autenticada
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -88,7 +89,7 @@ export default function App() {
         path="/cobranca/casos/:id"
         element={
           <ProtectedRoute>
-            <AppLayout><EmConstrucao titulo="Ficha do Caso" /></AppLayout>
+            <AppLayout><FichaCaso /></AppLayout>
           </ProtectedRoute>
         }
       />
