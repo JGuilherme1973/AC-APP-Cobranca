@@ -1,0 +1,18 @@
+/* ============================================================
+   VINDEX — Design Tokens
+   Paleta oficial: Vinho / Ouro / Navy / Marfim / Prata
+   ============================================================ */
+
+:root {
+  --vx-vinho:   #5A1220;
+  --vx-ouro:    #B79A5A;
+  --vx-navy:    #0E1B2A;
+  --vx-marfim:  #F6F2EC;
+  --vx-prata:   #C7CBD1;
+  --vx-navy-2:  #0a1420;
+  --vx-navy-3:  #06101a;
+  --vx-ouro-op: rgba(183, 154, 90, 0.15);
+  --vx-fonte-titulo: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --vx-fonte-label:  'Montserrat', sans-serif;
+  --vx-fonte-corpo:  'Lato', sans-serif;
+}
