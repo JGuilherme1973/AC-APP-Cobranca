@@ -9,7 +9,7 @@
  * A tabela sessoes_mfa controla lockout e timestamps de verificação.
  */
 
-import { authenticator } from 'otplib'
+import { generateSecret, generateURI, verifySync } from 'otplib'
 import { supabase } from '@/lib/supabase'
 import { salvarDadoSensivel, recuperarDadoSensivel } from './criptografia'
 import { registrarAuditoria } from '@/lib/lgpd/auditoria'
@@ -54,10 +54,10 @@ export async function configurarMFA(usuario_id: string): Promise<MFASetup> {
   }
 
   // Gerar segredo TOTP
-  const secret = authenticator.generateSecret()
+  const secret = generateSecret()
 
-  // Construir URI para QR Code
-  const qr_uri = authenticator.keyuri(email, 'VINDEX — ANDRADE & CINTRA', secret)
+  // Construir URI para QR Code via otplib v13
+  const qr_uri = generateURI({ issuer: 'VINDEX', label: email, secret })
 
   // Gerar 10 códigos de backup alfanuméricos de 8 caracteres
   const backup_codes: string[] = Array.from({ length: 10 }, () =>
@@ -121,10 +121,11 @@ export async function verificarMFA(
     throw new Error('MFA não configurado para este usuário')
   }
 
-  // Tentar verificação TOTP
+  // Tentar verificação TOTP (verifySync retorna { valid: boolean, delta?: number })
   let valido = false
   try {
-    valido = authenticator.verify({ token: codigo, secret })
+    const result = verifySync({ token: codigo, secret })
+    valido = result.valid
   } catch {
     valido = false
   }
