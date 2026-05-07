@@ -22,12 +22,12 @@ interface EventoCfg {
 }
 
 const EVENTO_CFG: Record<string, EventoCfg> = {
-  ABERTURA_CASO:       { icon: FolderOpen,    bg: '#0D1B2A', text: '#B89C5C', label: 'Abertura do Caso' },
+  ABERTURA_CASO:       { icon: FolderOpen,    bg: '#0E1B2A', text: '#B79A5A', label: 'Abertura do Caso' },
   COMUNICACAO_ENVIADA: { icon: MessageSquare, bg: '#1E3A5F', text: '#93C5FD', label: 'Comunicação Enviada' },
   RESPOSTA_RECEBIDA:   { icon: MessageSquare, bg: '#14532D', text: '#86EFAC', label: 'Resposta Recebida' },
   PAGAMENTO_PARCIAL:   { icon: DollarSign,    bg: '#14532D', text: '#86EFAC', label: 'Pagamento Parcial' },
-  DISTRIBUICAO_ACAO:   { icon: Scale,         bg: '#5A1E2A', text: '#FCA5A5', label: 'Distribuição de Ação' },
-  DECISAO_JUDICIAL:    { icon: Scale,         bg: '#5A1E2A', text: '#FCA5A5', label: 'Decisão Judicial' },
+  DISTRIBUICAO_ACAO:   { icon: Scale,         bg: '#5A1220', text: '#FCA5A5', label: 'Distribuição de Ação' },
+  DECISAO_JUDICIAL:    { icon: Scale,         bg: '#5A1220', text: '#FCA5A5', label: 'Decisão Judicial' },
   PENHORA_EFETIVADA:   { icon: CheckSquare,   bg: '#92400E', text: '#FCD34D', label: 'Penhora Efetivada' },
   ACORDO_FECHADO:      { icon: Handshake,     bg: '#14532D', text: '#86EFAC', label: 'Acordo Fechado' },
   ENCERRAMENTO_CASO:   { icon: XCircle,       bg: '#374151', text: '#D1D5DB', label: 'Encerramento do Caso' },
@@ -101,7 +101,7 @@ export default function TimelineCaso({ eventos, loading }: Props) {
                 {isFirst && (
                   <span
                     className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2"
-                    style={{ backgroundColor: '#B89C5C', borderColor: '#FAFAF8' }}
+                    style={{ backgroundColor: '#B79A5A', borderColor: '#FAFAF8' }}
                     title="Evento mais recente"
                   />
                 )}

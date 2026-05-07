@@ -169,7 +169,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
             VINDEX
           </p>
           <p className="text-xs font-montserrat" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            A&C Legal Desk — Segurança
+            VINDEX — Segurança
           </p>
         </div>
       </div>

@@ -40,7 +40,7 @@ function Field({
     <div>
       <label className="block font-montserrat text-xs font-semibold uppercase tracking-wide mb-1.5"
         style={{ color: error ? '#991B1B' : '#1A1A1A' }}>
-        {label}{required && <span className="ml-1" style={{ color: '#5A1E2A' }}>*</span>}
+        {label}{required && <span className="ml-1" style={{ color: '#5A1220' }}>*</span>}
       </label>
       {children}
       {error && (
@@ -58,7 +58,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: st
     <input
       {...rest}
       className={`w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors ${className}`}
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors ${className}`}
       style={{ borderColor: error ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
     />
   )
@@ -70,7 +70,7 @@ function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
       {...props}
       rows={3}
       className="w-full border rounded px-3 py-2.5 text-sm font-lato bg-white resize-none
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors"
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors"
       style={{ borderColor: '#E2D9C8', color: '#1A1A1A' }}
     />
   )
@@ -101,7 +101,7 @@ function DynamicList({
           type="button"
           onClick={() => append({ valor: '' })}
           className="flex items-center gap-1 text-xs font-montserrat font-semibold transition-colors"
-          style={{ color: '#B89C5C' }}
+          style={{ color: '#B79A5A' }}
         >
           <Plus size={12} /> Adicionar
         </button>
@@ -247,7 +247,7 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
       <div className="mb-6">
         <p className="font-montserrat text-xs font-semibold uppercase tracking-wide mb-2"
           style={{ color: '#1A1A1A' }}>
-          Tipo <span style={{ color: '#5A1E2A' }}>*</span>
+          Tipo <span style={{ color: '#5A1220' }}>*</span>
         </p>
         <div className="flex gap-2">
           {(['PF', 'PJ', 'DESCONHECIDO'] as const).map(t => (
@@ -255,9 +255,9 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
               onClick={() => setValue('tipo', t, { shouldValidate: true })}
               className="px-4 py-2 rounded font-montserrat text-xs font-semibold transition-all border"
               style={{
-                backgroundColor: tipo === t ? '#5A1E2A' : 'white',
+                backgroundColor: tipo === t ? '#5A1220' : 'white',
                 color:           tipo === t ? 'white'   : '#6B6B6B',
-                borderColor:     tipo === t ? '#5A1E2A' : '#E2D9C8',
+                borderColor:     tipo === t ? '#5A1220' : '#E2D9C8',
               }}>
               {t === 'PF' ? 'Pessoa Física' : t === 'PJ' ? 'Pessoa Jurídica' : 'Desconhecido'}
             </button>
@@ -354,7 +354,7 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
       <div className="mt-5">
         <p className="font-montserrat text-xs font-semibold uppercase tracking-wide mb-2"
           style={{ color: '#1A1A1A' }}>
-          Perfil de risco <span style={{ color: '#5A1E2A' }}>*</span>
+          Perfil de risco <span style={{ color: '#5A1220' }}>*</span>
         </p>
         <div className="flex gap-2 flex-wrap">
           {perfilRiscoOpts.map(opt => (
@@ -430,7 +430,7 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
         <div>
           <p className="font-montserrat text-xs font-semibold uppercase tracking-wide mb-2"
             style={{ color: '#1A1A1A' }}>
-            Contatável via WhatsApp? <span style={{ color: '#5A1E2A' }}>*</span>
+            Contatável via WhatsApp? <span style={{ color: '#5A1220' }}>*</span>
           </p>
           <div className="flex gap-2">
             {whatsappOpts.map(opt => (
@@ -438,9 +438,9 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
                 onClick={() => setValue('contatavel_whatsapp', opt.value, { shouldValidate: true })}
                 className="px-4 py-2 rounded font-montserrat text-xs font-semibold transition-all border"
                 style={{
-                  backgroundColor: wpAtual === opt.value ? '#5A1E2A' : 'white',
+                  backgroundColor: wpAtual === opt.value ? '#5A1220' : 'white',
                   color:           wpAtual === opt.value ? 'white'   : '#6B6B6B',
-                  borderColor:     wpAtual === opt.value ? '#5A1E2A' : '#E2D9C8',
+                  borderColor:     wpAtual === opt.value ? '#5A1220' : '#E2D9C8',
                 }}>
                 {opt.label}
               </button>
@@ -460,18 +460,18 @@ export default function StepDevedor({ defaultValues, onNext, onBack }: Props) {
       <div className="flex justify-between mt-8 pt-5" style={{ borderTop: '1px solid #E2D9C8' }}>
         <button type="button" onClick={onBack}
           className="px-7 py-2.5 rounded font-montserrat text-sm font-semibold transition-colors border"
-          style={{ borderColor: '#5A1E2A', color: '#5A1E2A', backgroundColor: 'white' }}
-          onMouseEnter={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: '#5A1E2A', color: 'white' }) }}
-          onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: 'white',   color: '#5A1E2A' }) }}>
+          style={{ borderColor: '#5A1220', color: '#5A1220', backgroundColor: 'white' }}
+          onMouseEnter={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: '#5A1220', color: 'white' }) }}
+          onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: 'white',   color: '#5A1220' }) }}>
           ← Anterior
         </button>
         <div className="flex flex-col items-end gap-1">
           <button type="submit"
             disabled={serproStatus === 'invalido' && !serproForcar}
             className="px-8 py-2.5 rounded font-montserrat text-sm font-semibold text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{ backgroundColor: '#5A1E2A' }}
-            onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}>
+            style={{ backgroundColor: '#5A1220' }}
+            onMouseEnter={e => { if (!(e.currentTarget as HTMLButtonElement).disabled) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B79A5A' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1220' }}>
             Próximo →
           </button>
           {serproStatus === 'invalido' && !serproForcar && (

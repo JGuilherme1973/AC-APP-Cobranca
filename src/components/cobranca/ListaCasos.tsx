@@ -175,8 +175,8 @@ function BadgeTipo({ tipo }: { tipo: string }) {
 // Ícone de ordenação na coluna
 function SortIcon({ ativo, dir }: { ativo: boolean; dir: 'asc' | 'desc' }) {
   if (!ativo) return <ChevronsUpDown size={12} style={{ color: '#C0C0C0' }} />
-  if (dir === 'asc') return <ChevronUp size={12} style={{ color: '#B89C5C' }} />
-  return <ChevronDown size={12} style={{ color: '#B89C5C' }} />
+  if (dir === 'asc') return <ChevronUp size={12} style={{ color: '#B79A5A' }} />
+  return <ChevronDown size={12} style={{ color: '#B79A5A' }} />
 }
 
 // Modal base reutilizável
@@ -395,7 +395,7 @@ export default function ListaCasos() {
       {/* Cabeçalho da página */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1E2A' }}>
+          <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1220' }}>
             Casos
           </h1>
           {!loading && (
@@ -412,7 +412,7 @@ export default function ListaCasos() {
             onClick={() => exportarCSV(casosFiltrados)}
             disabled={loading || casosFiltrados.length === 0}
             className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-montserrat font-semibold transition-colors disabled:opacity-40"
-            style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A', border: '1px solid #E2D9C8' }}
+            style={{ backgroundColor: '#F0EBE0', color: '#5A1220', border: '1px solid #E2D9C8' }}
           >
             <Download size={15} />
             Exportar CSV
@@ -420,9 +420,9 @@ export default function ListaCasos() {
           <button
             onClick={() => navigate('/cobranca/novo-caso')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-montserrat font-semibold transition-colors"
-            style={{ backgroundColor: '#5A1E2A', color: '#FFFFFF' }}
+            style={{ backgroundColor: '#5A1220', color: '#FFFFFF' }}
             onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#7A2E3E')}
-            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#5A1E2A')}
+            onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#5A1220')}
           >
             <Plus size={15} />
             Novo Caso
@@ -564,7 +564,7 @@ export default function ListaCasos() {
                     <button
                       onClick={() => void refetch()}
                       className="mt-3 font-montserrat text-sm font-semibold underline"
-                      style={{ color: '#5A1E2A' }}
+                      style={{ color: '#5A1220' }}
                     >
                       Tentar novamente
                     </button>
@@ -576,7 +576,7 @@ export default function ListaCasos() {
                 <tr>
                   <td colSpan={9} className="px-4 py-16 text-center">
                     <FolderOpen size={40} className="mx-auto mb-3" style={{ color: '#C0C0C0' }} />
-                    <p className="font-cinzel font-bold text-base" style={{ color: '#5A1E2A' }}>
+                    <p className="font-cinzel font-bold text-base" style={{ color: '#5A1220' }}>
                       {temFiltro ? 'Nenhum caso encontrado' : 'Nenhum caso cadastrado'}
                     </p>
                     <p className="font-lato text-sm mt-1 mb-4" style={{ color: '#9B9B9B' }}>
@@ -588,7 +588,7 @@ export default function ListaCasos() {
                       <button
                         onClick={() => navigate('/cobranca/novo-caso')}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-montserrat font-semibold"
-                        style={{ backgroundColor: '#5A1E2A', color: '#FFFFFF' }}
+                        style={{ backgroundColor: '#5A1220', color: '#FFFFFF' }}
                       >
                         <Plus size={14} />
                         Novo Caso
@@ -598,7 +598,7 @@ export default function ListaCasos() {
                       <button
                         onClick={limparFiltros}
                         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-montserrat font-semibold"
-                        style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A', border: '1px solid #E2D9C8' }}
+                        style={{ backgroundColor: '#F0EBE0', color: '#5A1220', border: '1px solid #E2D9C8' }}
                       >
                         <X size={14} />
                         Limpar filtros
@@ -668,7 +668,7 @@ export default function ListaCasos() {
 
                     {/* Valor */}
                     <td className="px-3 py-3">
-                      <span className="font-montserrat text-sm font-semibold" style={{ color: '#5A1E2A' }}>
+                      <span className="font-montserrat text-sm font-semibold" style={{ color: '#5A1220' }}>
                         {formatarMoeda(caso.valor_atualizado)}
                       </span>
                     </td>
@@ -775,7 +775,7 @@ export default function ListaCasos() {
                 disabled={paginaAtual === 1}
                 onClick={() => setPagina(p => Math.max(1, p - 1))}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-montserrat font-semibold disabled:opacity-40 transition-colors"
-                style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A', border: '1px solid #E2D9C8' }}
+                style={{ backgroundColor: '#F0EBE0', color: '#5A1220', border: '1px solid #E2D9C8' }}
               >
                 <ChevronLeft size={14} />
                 Anterior
@@ -799,7 +799,7 @@ export default function ListaCasos() {
                           onClick={() => setPagina(p as number)}
                           className="w-8 h-8 rounded-lg text-sm font-montserrat font-semibold transition-colors"
                           style={{
-                            backgroundColor: paginaAtual === p ? '#5A1E2A' : 'transparent',
+                            backgroundColor: paginaAtual === p ? '#5A1220' : 'transparent',
                             color: paginaAtual === p ? '#FFFFFF' : '#6B7280',
                           }}
                         >
@@ -813,7 +813,7 @@ export default function ListaCasos() {
                 disabled={paginaAtual === totalPaginas}
                 onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-montserrat font-semibold disabled:opacity-40 transition-colors"
-                style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A', border: '1px solid #E2D9C8' }}
+                style={{ backgroundColor: '#F0EBE0', color: '#5A1220', border: '1px solid #E2D9C8' }}
               >
                 Próxima
                 <ChevronRight size={14} />
@@ -828,7 +828,7 @@ export default function ListaCasos() {
       {/* Modal: Registrar evento rápido */}
       {modalAberto?.tipo === 'evento' && (
         <Modal onClose={() => setModalAberto(null)}>
-          <h3 className="font-cinzel font-bold text-base mb-1" style={{ color: '#5A1E2A' }}>
+          <h3 className="font-cinzel font-bold text-base mb-1" style={{ color: '#5A1220' }}>
             Registrar Evento
           </h3>
           <p className="font-lato text-xs mb-4" style={{ color: '#9B9B9B' }}>
@@ -865,7 +865,7 @@ export default function ListaCasos() {
             <button
               onClick={() => setModalAberto(null)}
               className="px-4 py-2 rounded-lg text-sm font-montserrat font-semibold"
-              style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A' }}
+              style={{ backgroundColor: '#F0EBE0', color: '#5A1220' }}
             >
               Cancelar
             </button>
@@ -873,7 +873,7 @@ export default function ListaCasos() {
               onClick={() => void handleSalvarEvento()}
               disabled={!eventoDesc.trim() || salvando}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-montserrat font-semibold disabled:opacity-50"
-              style={{ backgroundColor: '#5A1E2A', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#5A1220', color: '#FFFFFF' }}
             >
               {salvando && <Loader2 size={13} className="animate-spin" />}
               Registrar
@@ -885,7 +885,7 @@ export default function ListaCasos() {
       {/* Modal: Alterar etapa */}
       {modalAberto?.tipo === 'etapa' && (
         <Modal onClose={() => setModalAberto(null)}>
-          <h3 className="font-cinzel font-bold text-base mb-4" style={{ color: '#5A1E2A' }}>
+          <h3 className="font-cinzel font-bold text-base mb-4" style={{ color: '#5A1220' }}>
             Alterar Etapa
           </h3>
 
@@ -919,7 +919,7 @@ export default function ListaCasos() {
             <button
               onClick={() => setModalAberto(null)}
               className="px-4 py-2 rounded-lg text-sm font-montserrat font-semibold"
-              style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A' }}
+              style={{ backgroundColor: '#F0EBE0', color: '#5A1220' }}
             >
               Cancelar
             </button>
@@ -927,7 +927,7 @@ export default function ListaCasos() {
               onClick={() => void handleSalvarEtapa()}
               disabled={!novaEtapa || novaEtapa === modalAberto.etapaAtual || salvando}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-montserrat font-semibold disabled:opacity-50"
-              style={{ backgroundColor: '#5A1E2A', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#5A1220', color: '#FFFFFF' }}
             >
               {salvando && <Loader2 size={13} className="animate-spin" />}
               Confirmar
@@ -958,7 +958,7 @@ export default function ListaCasos() {
             <button
               onClick={() => setModalAberto(null)}
               className="px-5 py-2 rounded-lg text-sm font-montserrat font-semibold"
-              style={{ backgroundColor: '#F0EBE0', color: '#5A1E2A' }}
+              style={{ backgroundColor: '#F0EBE0', color: '#5A1220' }}
             >
               Cancelar
             </button>

@@ -66,7 +66,7 @@ function Field({
     <div>
       <label className="block font-montserrat text-xs font-semibold uppercase tracking-wide mb-1.5"
         style={{ color: error ? '#991B1B' : '#1A1A1A' }}>
-        {label}{required && <span className="ml-1" style={{ color: '#5A1E2A' }}>*</span>}
+        {label}{required && <span className="ml-1" style={{ color: '#5A1220' }}>*</span>}
       </label>
       {children}
       {error && (
@@ -84,7 +84,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement> & { error?: st
     <input
       {...rest}
       className={`w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors ${className}`}
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors ${className}`}
       style={{ borderColor: error ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
     />
   )
@@ -96,7 +96,7 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement> & { error?:
     <select
       {...rest}
       className={`w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors ${className}`}
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors ${className}`}
       style={{ borderColor: error ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
     >
       {children}
@@ -204,8 +204,8 @@ function ValorAtualizadoPanel({
       <div className="rounded-lg p-4 mt-2"
         style={{ backgroundColor: '#F9F6F1', border: '1px solid #E2D9C8' }}>
         <div className="flex items-center gap-2 mb-3">
-          <TrendingUp size={15} style={{ color: '#B89C5C', flexShrink: 0 }} />
-          <p className="font-montserrat text-xs font-bold uppercase tracking-wide" style={{ color: '#5A1E2A' }}>
+          <TrendingUp size={15} style={{ color: '#B79A5A', flexShrink: 0 }} />
+          <p className="font-montserrat text-xs font-bold uppercase tracking-wide" style={{ color: '#5A1220' }}>
             Valor Atualizado {indexado ? '(estimado — sem índice real)' : ''}
           </p>
         </div>
@@ -229,7 +229,7 @@ function ValorAtualizadoPanel({
             </div>
           )}
           <div className="flex justify-between pt-2 font-montserrat font-bold text-sm"
-            style={{ borderTop: '1px solid #E2D9C8', color: '#5A1E2A' }}>
+            style={{ borderTop: '1px solid #E2D9C8', color: '#5A1220' }}>
             <span>TOTAL {indexado ? 'ESTIMADO' : ''}</span>
             <span>{formatarMoeda(total)}</span>
           </div>
@@ -417,7 +417,7 @@ export default function StepTitulo({ defaultValues, arquivos: arquivosInit = [],
             rows={3}
             placeholder="Descreva os documentos comprobatórios, onde estão guardados, observações relevantes..."
             className="w-full border rounded px-3 py-2.5 text-sm font-lato bg-white resize-none
-              focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors"
+              focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors"
             style={{ borderColor: '#E2D9C8', color: '#1A1A1A' }}
           />
         </Field>
@@ -432,14 +432,14 @@ export default function StepTitulo({ defaultValues, arquivos: arquivosInit = [],
 
         <div
           className="rounded-lg border-2 border-dashed transition-colors cursor-pointer"
-          style={{ borderColor: dragOver ? '#B89C5C' : '#E2D9C8', backgroundColor: dragOver ? '#FAFAF0' : '#FAFAF8' }}
+          style={{ borderColor: dragOver ? '#B79A5A' : '#E2D9C8', backgroundColor: dragOver ? '#FAFAF0' : '#FAFAF8' }}
           onDragOver={e => { e.preventDefault(); setDragOver(true) }}
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => document.getElementById('file-input')?.click()}
         >
           <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
-            <Upload size={28} style={{ color: dragOver ? '#B89C5C' : '#C0C0C0', marginBottom: '8px' }} />
+            <Upload size={28} style={{ color: dragOver ? '#B79A5A' : '#C0C0C0', marginBottom: '8px' }} />
             <p className="font-montserrat text-sm font-semibold" style={{ color: '#6B6B6B' }}>
               Arraste arquivos ou clique para selecionar
             </p>
@@ -464,7 +464,7 @@ export default function StepTitulo({ defaultValues, arquivos: arquivosInit = [],
               <div key={i}
                 className="flex items-center gap-3 px-4 py-2.5 rounded border"
                 style={{ borderColor: '#E2D9C8', backgroundColor: 'white' }}>
-                <FileText size={16} style={{ color: '#B89C5C', flexShrink: 0 }} />
+                <FileText size={16} style={{ color: '#B79A5A', flexShrink: 0 }} />
                 <span className="font-lato text-sm flex-1 truncate" style={{ color: '#1A1A1A' }}>
                   {f.name}
                 </span>
@@ -486,16 +486,16 @@ export default function StepTitulo({ defaultValues, arquivos: arquivosInit = [],
       <div className="flex justify-between mt-8 pt-5" style={{ borderTop: '1px solid #E2D9C8' }}>
         <button type="button" onClick={onBack}
           className="px-7 py-2.5 rounded font-montserrat text-sm font-semibold transition-colors border"
-          style={{ borderColor: '#5A1E2A', color: '#5A1E2A', backgroundColor: 'white' }}
-          onMouseEnter={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: '#5A1E2A', color: 'white' }) }}
-          onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: 'white', color: '#5A1E2A' }) }}>
+          style={{ borderColor: '#5A1220', color: '#5A1220', backgroundColor: 'white' }}
+          onMouseEnter={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: '#5A1220', color: 'white' }) }}
+          onMouseLeave={e => { Object.assign((e.currentTarget as HTMLButtonElement).style, { backgroundColor: 'white', color: '#5A1220' }) }}>
           ← Anterior
         </button>
         <button type="submit"
           className="px-8 py-2.5 rounded font-montserrat text-sm font-semibold text-white transition-colors"
-          style={{ backgroundColor: '#5A1E2A' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}>
+          style={{ backgroundColor: '#5A1220' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B79A5A' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1220' }}>
           Próximo →
         </button>
       </div>

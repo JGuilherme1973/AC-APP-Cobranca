@@ -96,9 +96,9 @@ function Modal({ titulo, onClose, children }: {
         {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-4"
-          style={{ backgroundColor: '#0D1B2A', borderBottom: '1px solid rgba(184,156,92,0.2)' }}
+          style={{ backgroundColor: '#0E1B2A', borderBottom: '1px solid rgba(183,154,90,0.2)' }}
         >
-          <h3 className="font-cinzel text-sm font-semibold" style={{ color: '#B89C5C' }}>
+          <h3 className="font-cinzel text-sm font-semibold" style={{ color: '#B79A5A' }}>
             {titulo}
           </h3>
           <button onClick={onClose}
@@ -144,9 +144,9 @@ function ModalWhatsApp({ caso, onClose, onEnviar }: {
                 onClick={() => setTemplateId(t.id)}
                 className="px-3 py-1.5 rounded text-xs font-montserrat font-semibold transition-all border"
                 style={{
-                  backgroundColor: templateId === t.id ? '#5A1E2A' : 'white',
+                  backgroundColor: templateId === t.id ? '#5A1220' : 'white',
                   color:           templateId === t.id ? 'white'   : '#6B6B6B',
-                  borderColor:     templateId === t.id ? '#5A1E2A' : '#E2D9C8',
+                  borderColor:     templateId === t.id ? '#5A1220' : '#E2D9C8',
                 }}>
                 {t.label}
               </button>
@@ -223,9 +223,9 @@ function ModalEmail({ caso, onClose, onEnviar }: {
                 onClick={() => setTemplateId(t.id)}
                 className="px-3 py-1.5 rounded text-xs font-montserrat font-semibold transition-all border"
                 style={{
-                  backgroundColor: templateId === t.id ? '#5A1E2A' : 'white',
+                  backgroundColor: templateId === t.id ? '#5A1220' : 'white',
                   color:           templateId === t.id ? 'white'   : '#6B6B6B',
-                  borderColor:     templateId === t.id ? '#5A1E2A' : '#E2D9C8',
+                  borderColor:     templateId === t.id ? '#5A1220' : '#E2D9C8',
                 }}>
                 {t.label}
               </button>
@@ -265,7 +265,7 @@ function ModalEmail({ caso, onClose, onEnviar }: {
           <button onClick={handleEnviar} disabled={enviando}
             className="flex-1 py-2.5 rounded text-sm font-montserrat font-semibold text-white
                        flex items-center justify-center gap-2 transition-colors"
-            style={{ backgroundColor: '#5A1E2A' }}>
+            style={{ backgroundColor: '#5A1220' }}>
             {enviando ? <Loader2 size={15} className="animate-spin" /> : <Send size={15} />}
             {enviando ? 'Registrando...' : 'Registrar Envio'}
           </button>
@@ -302,7 +302,7 @@ function ModalEvento({ onClose, onSalvar }: {
             value={tipo}
             onChange={e => setTipo(e.target.value)}
             className="w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-              focus:outline-none focus:ring-2 focus:ring-[#5A1E2A]"
+              focus:outline-none focus:ring-2 focus:ring-[#5A1220]"
             style={{ borderColor: '#E2D9C8', color: '#1A1A1A' }}>
             {TIPOS_EVENTO.map(t => (
               <option key={t} value={t}>{t.replace(/_/g, ' ')}</option>
@@ -311,14 +311,14 @@ function ModalEvento({ onClose, onSalvar }: {
         </div>
 
         <div>
-          <label className="label-ac">Descrição <span style={{ color: '#5A1E2A' }}>*</span></label>
+          <label className="label-ac">Descrição <span style={{ color: '#5A1220' }}>*</span></label>
           <textarea
             value={descricao}
             onChange={e => { setDescricao(e.target.value); setErro('') }}
             rows={4}
             placeholder="Descreva o evento, decisão, diligência ou comunicação registrada..."
             className="w-full border rounded px-3 py-2.5 text-sm font-lato bg-white resize-none
-              focus:outline-none focus:ring-2 focus:ring-[#5A1E2A]"
+              focus:outline-none focus:ring-2 focus:ring-[#5A1220]"
             style={{ borderColor: erro ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
           />
           {erro && <p className="mt-1 font-lato text-xs" style={{ color: '#991B1B' }}>{erro}</p>}
@@ -333,7 +333,7 @@ function ModalEvento({ onClose, onSalvar }: {
           <button onClick={handleSalvar} disabled={salvando}
             className="flex-1 py-2.5 rounded text-sm font-montserrat font-semibold text-white
                        flex items-center justify-center gap-2"
-            style={{ backgroundColor: '#5A1E2A' }}>
+            style={{ backgroundColor: '#5A1220' }}>
             {salvando ? <Loader2 size={15} className="animate-spin" /> : null}
             {salvando ? 'Salvando...' : 'Registrar'}
           </button>
@@ -384,7 +384,7 @@ export default function PainelAcoes({ caso, onEnviarWA, onEnviarEmail, onRegistr
       label: 'E-mail',
       desc:  'Notificação formal',
       icon:  Mail,
-      bg:    '#5A1E2A',
+      bg:    '#5A1220',
       onClick: () => setModal('email'),
     },
     {
@@ -392,7 +392,7 @@ export default function PainelAcoes({ caso, onEnviarWA, onEnviarEmail, onRegistr
       label: 'Registrar Evento',
       desc:  'Log cronológico',
       icon:  FilePlus,
-      bg:    '#0D1B2A',
+      bg:    '#0E1B2A',
       onClick: () => setModal('evento'),
     },
     {
@@ -400,7 +400,7 @@ export default function PainelAcoes({ caso, onEnviarWA, onEnviarEmail, onRegistr
       label: 'Gerar PDF',
       desc:  'Notificação extrajudicial',
       icon:  FileDown,
-      bg:    '#B89C5C',
+      bg:    '#B79A5A',
       onClick: handleGerarPDF,
     },
   ] as const

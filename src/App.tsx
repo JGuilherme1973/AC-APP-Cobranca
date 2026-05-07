@@ -37,11 +37,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0D1B2A' }}
+        style={{ backgroundColor: '#0E1B2A' }}
       >
         <div
           className="w-10 h-10 rounded-full border-2 border-t-transparent animate-spin"
-          style={{ borderColor: '#5A1E2A', borderTopColor: '#B89C5C' }}
+          style={{ borderColor: '#5A1220', borderTopColor: '#B79A5A' }}
         />
       </div>
     )
@@ -55,7 +55,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function EmConstrucao({ titulo }: { titulo: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-64 gap-3">
-      <h2 className="font-cinzel text-xl font-bold" style={{ color: '#5A1E2A' }}>{titulo}</h2>
+      <h2 className="font-cinzel text-xl font-bold" style={{ color: '#5A1220' }}>{titulo}</h2>
       <p className="font-lato text-sm" style={{ color: '#9B9B9B' }}>
         Módulo em construção — MVP em andamento
       </p>

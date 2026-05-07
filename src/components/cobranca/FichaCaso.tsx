@@ -36,9 +36,9 @@ const ETAPA_LABEL: Record<EtapaCaso, string> = {
 }
 
 const ETAPA_COR: Record<EtapaCaso, string> = {
-  DIAGNOSTICO:            '#B89C5C',
+  DIAGNOSTICO:            '#B79A5A',
   ESTRATEGIA:             '#8AA3BE',
-  COBRANCA_EXTRAJUDICIAL: '#5A1E2A',
+  COBRANCA_EXTRAJUDICIAL: '#5A1220',
   ACAO_JUDICIAL:          '#1E3A5F',
   EXECUCAO_RECUPERACAO:   '#14532D',
 }
@@ -70,8 +70,8 @@ function SectionCard({
         style={{ backgroundColor: open ? '#FAFAF8' : 'white' }}
       >
         <div className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0"
-          style={{ backgroundColor: '#5A1E2A' }}>
-          <Icon size={12} color="#B89C5C" />
+          style={{ backgroundColor: '#5A1220' }}>
+          <Icon size={12} color="#B79A5A" />
         </div>
         <span className="font-montserrat text-xs font-bold uppercase tracking-wide flex-1"
           style={{ color: '#1A1A1A' }}>
@@ -139,18 +139,18 @@ function CampoPesquisa({
   if (editando) {
     return (
       <div className="space-y-2 p-3 rounded" style={{ backgroundColor: '#F9F6F1', border: '1px solid #E2D9C8' }}>
-        <p className="font-montserrat text-[10px] font-bold uppercase" style={{ color: '#5A1E2A' }}>{label}</p>
+        <p className="font-montserrat text-[10px] font-bold uppercase" style={{ color: '#5A1220' }}>{label}</p>
         <input value={dat} onChange={e => setDat(e.target.value)} type="date"
-          className="w-full border rounded px-2 py-1.5 text-xs font-lato focus:outline-none focus:ring-1 focus:ring-[#5A1E2A]"
+          className="w-full border rounded px-2 py-1.5 text-xs font-lato focus:outline-none focus:ring-1 focus:ring-[#5A1220]"
           style={{ borderColor: '#E2D9C8' }} />
         <textarea value={val} onChange={e => setVal(e.target.value)} rows={2}
           placeholder="Resultado da consulta..."
-          className="w-full border rounded px-2 py-1.5 text-xs font-lato resize-none focus:outline-none focus:ring-1 focus:ring-[#5A1E2A]"
+          className="w-full border rounded px-2 py-1.5 text-xs font-lato resize-none focus:outline-none focus:ring-1 focus:ring-[#5A1220]"
           style={{ borderColor: '#E2D9C8' }} />
         <div className="flex gap-2">
           <button onClick={() => { onSave(val, dat); setEditando(false) }}
             className="flex-1 py-1.5 rounded text-xs font-montserrat font-semibold text-white"
-            style={{ backgroundColor: '#5A1E2A' }}>
+            style={{ backgroundColor: '#5A1220' }}>
             Salvar
           </button>
           <button onClick={() => setEditando(false)}
@@ -166,15 +166,15 @@ function CampoPesquisa({
   return (
     <button
       onClick={() => setEditando(true)}
-      className="w-full text-left p-3 rounded border transition-colors hover:border-[#B89C5C] group"
+      className="w-full text-left p-3 rounded border transition-colors hover:border-[#B79A5A] group"
       style={{ borderColor: '#E2D9C8', backgroundColor: resultado ? 'white' : '#FAFAF8' }}
     >
       <div className="flex items-center justify-between mb-1">
-        <span className="font-montserrat text-[10px] font-bold uppercase" style={{ color: '#5A1E2A' }}>
+        <span className="font-montserrat text-[10px] font-bold uppercase" style={{ color: '#5A1220' }}>
           {label}
         </span>
         <span className="font-lato text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ color: '#B89C5C' }}>
+          style={{ color: '#B79A5A' }}>
           {resultado ? 'Editar' : 'Registrar'}
         </span>
       </div>
@@ -224,7 +224,7 @@ export default function FichaCaso() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
-        <Loader2 size={32} className="animate-spin" style={{ color: '#B89C5C' }} />
+        <Loader2 size={32} className="animate-spin" style={{ color: '#B79A5A' }} />
         <p className="font-lato text-sm" style={{ color: '#9B9B9B' }}>Carregando ficha do caso...</p>
       </div>
     )
@@ -238,7 +238,7 @@ export default function FichaCaso() {
           {error ?? 'Caso não encontrado.'}
         </p>
         <button onClick={() => navigate('/cobranca/casos')}
-          className="font-montserrat text-sm font-semibold" style={{ color: '#B89C5C' }}>
+          className="font-montserrat text-sm font-semibold" style={{ color: '#B79A5A' }}>
           ← Voltar à lista
         </button>
       </div>
@@ -259,8 +259,8 @@ export default function FichaCaso() {
   // Mini-kanban groups
   const kanbanGrupos = ['A_FAZER', 'EM_ANDAMENTO', 'CONCLUIDA'] as const
   const kanbanCores: Record<string, { header: string; bg: string }> = {
-    A_FAZER:      { header: '#0D1B2A', bg: '#F0EBE0' },
-    EM_ANDAMENTO: { header: '#B89C5C', bg: '#FFFBEB' },
+    A_FAZER:      { header: '#0E1B2A', bg: '#F0EBE0' },
+    EM_ANDAMENTO: { header: '#B79A5A', bg: '#FFFBEB' },
     CONCLUIDA:    { header: '#14532D', bg: '#F0FDF4' },
   }
 
@@ -273,7 +273,7 @@ export default function FichaCaso() {
             to="/cobranca/casos"
             className="flex items-center gap-1 font-montserrat text-xs font-semibold
                        transition-colors hover:opacity-80"
-            style={{ color: '#B89C5C' }}
+            style={{ color: '#B79A5A' }}
           >
             <ChevronLeft size={14} /> Lista de Casos
           </Link>
@@ -302,7 +302,7 @@ export default function FichaCaso() {
             style={{ border: '1px solid #E2D9C8' }}
           >
             {/* Header vinho */}
-            <div className="px-5 py-4" style={{ backgroundColor: '#0D1B2A' }}>
+            <div className="px-5 py-4" style={{ backgroundColor: '#0E1B2A' }}>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="font-montserrat text-[10px] font-semibold uppercase tracking-widest mb-1"
@@ -318,7 +318,7 @@ export default function FichaCaso() {
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className="font-cinzel text-xl font-bold" style={{ color: '#B89C5C' }}>
+                  <p className="font-cinzel text-xl font-bold" style={{ color: '#B79A5A' }}>
                     {formatarMoeda(titulo.valor_atualizado)}
                   </p>
                   <p className="font-lato text-[10px] mt-0.5" style={{ color: '#8AA3BE' }}>
@@ -374,7 +374,7 @@ export default function FichaCaso() {
                 value={caso.etapa_atual}
                 onChange={e => void atualizarEtapa(e.target.value)}
                 className="w-full border rounded px-3 py-2 text-sm font-lato bg-white
-                  focus:outline-none focus:ring-2 focus:ring-[#5A1E2A]"
+                  focus:outline-none focus:ring-2 focus:ring-[#5A1220]"
                 style={{ borderColor: '#E2D9C8', color: '#1A1A1A' }}>
                 {(Object.entries(ETAPA_LABEL) as [EtapaCaso, string][]).map(([v, l]) => (
                   <option key={v} value={v}>{l}</option>
@@ -467,7 +467,7 @@ export default function FichaCaso() {
               <InfoRow label="Tipo" value={titulo.tipo_titulo.replace(/_/g, ' ')} />
               <InfoRow label="Valor Original" value={formatarMoeda(titulo.valor_original)} />
               <InfoRow label="Valor Atualizado" value={
-                <span className="font-montserrat font-bold" style={{ color: '#5A1E2A' }}>
+                <span className="font-montserrat font-bold" style={{ color: '#5A1220' }}>
                   {formatarMoeda(titulo.valor_atualizado)}
                 </span>
               } />
@@ -492,7 +492,7 @@ export default function FichaCaso() {
                 <InfoRow label="Nº Processo" value={
                   caso.link_tribunal
                     ? <a href={caso.link_tribunal} target="_blank" rel="noreferrer"
-                        className="flex items-center gap-1" style={{ color: '#B89C5C' }}>
+                        className="flex items-center gap-1" style={{ color: '#B79A5A' }}>
                         {caso.numero_processo} <ExternalLink size={11} />
                       </a>
                     : caso.numero_processo
@@ -551,8 +551,8 @@ export default function FichaCaso() {
                   onClick={() => setAbaAtiva(key)}
                   className="px-4 py-3 text-xs font-montserrat font-semibold whitespace-nowrap border-b-2 transition-colors"
                   style={{
-                    borderBottomColor: abaAtiva === key ? '#5A1E2A' : 'transparent',
-                    color: abaAtiva === key ? '#5A1E2A' : '#9B9B9B',
+                    borderBottomColor: abaAtiva === key ? '#5A1220' : 'transparent',
+                    color: abaAtiva === key ? '#5A1220' : '#9B9B9B',
                     backgroundColor: 'transparent',
                   }}>
                   {label}
@@ -586,7 +586,7 @@ export default function FichaCaso() {
             {abaAtiva === 'timeline' && (
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-4">
-                  <Clock size={15} style={{ color: '#B89C5C' }} />
+                  <Clock size={15} style={{ color: '#B79A5A' }} />
                   <span className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
                     Timeline do Caso
                   </span>
@@ -623,7 +623,7 @@ export default function FichaCaso() {
               <div>
                 <div className="px-5 py-3.5 flex items-center gap-2"
                   style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
-                  <FileText size={15} style={{ color: '#B89C5C' }} />
+                  <FileText size={15} style={{ color: '#B79A5A' }} />
                   <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
                     Documentos
                   </h3>
@@ -635,7 +635,7 @@ export default function FichaCaso() {
                     </p>
                   ) : documentos.map(doc => (
                     <div key={doc.id} className="flex items-center gap-3 px-5 py-3">
-                      <FileText size={16} style={{ color: '#B89C5C', flexShrink: 0 }} />
+                      <FileText size={16} style={{ color: '#B79A5A', flexShrink: 0 }} />
                       <div className="flex-1 min-w-0">
                         <p className="font-lato text-sm truncate" style={{ color: '#1A1A1A' }}>
                           {doc.nome_arquivo}
@@ -645,7 +645,7 @@ export default function FichaCaso() {
                         </p>
                       </div>
                       <a href={doc.url_storage} target="_blank" rel="noreferrer"
-                        className="p-1.5 rounded border transition-colors hover:border-[#B89C5C]"
+                        className="p-1.5 rounded border transition-colors hover:border-[#B79A5A]"
                         style={{ borderColor: '#E2D9C8', color: '#9B9B9B' }}>
                         <Download size={14} />
                       </a>
@@ -661,7 +661,7 @@ export default function FichaCaso() {
           <div className="bg-white rounded-lg border shadow-sm mt-5" style={{ borderColor: '#E2D9C8' }}>
             <div className="px-5 py-3.5 flex items-center gap-2"
               style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}>
-              <CheckCircle2 size={15} style={{ color: '#B89C5C' }} />
+              <CheckCircle2 size={15} style={{ color: '#B79A5A' }} />
               <h3 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
                 Tarefas do Caso
               </h3>

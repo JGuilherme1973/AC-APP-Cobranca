@@ -67,7 +67,7 @@ function Field({
     <div>
       <label className="block font-montserrat text-xs font-semibold uppercase tracking-wide mb-1.5"
         style={{ color: error ? '#991B1B' : '#1A1A1A' }}>
-        {label}{required && <span className="ml-1" style={{ color: '#5A1E2A' }}>*</span>}
+        {label}{required && <span className="ml-1" style={{ color: '#5A1220' }}>*</span>}
       </label>
       {children}
       {error && (
@@ -86,7 +86,7 @@ function Input({
     <input
       {...props}
       className={`w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors
         disabled:bg-gray-50 disabled:cursor-not-allowed ${className}`}
       style={{ borderColor: error ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
     />
@@ -149,7 +149,7 @@ export default function StepCreedor({ defaultValues, onNext }: Props) {
       <div className="mb-6">
         <p className="font-montserrat text-xs font-semibold uppercase tracking-wide mb-2"
           style={{ color: '#1A1A1A' }}>
-          Tipo de pessoa <span style={{ color: '#5A1E2A' }}>*</span>
+          Tipo de pessoa <span style={{ color: '#5A1220' }}>*</span>
         </p>
         <div className="flex gap-2">
           {(['PF', 'PJ'] as const).map(t => (
@@ -159,9 +159,9 @@ export default function StepCreedor({ defaultValues, onNext }: Props) {
               onClick={() => setValue('tipo', t, { shouldValidate: true })}
               className="px-5 py-2 rounded font-montserrat text-sm font-semibold transition-all border"
               style={{
-                backgroundColor: tipo === t ? '#5A1E2A' : 'white',
+                backgroundColor: tipo === t ? '#5A1220' : 'white',
                 color:           tipo === t ? 'white'   : '#6B6B6B',
-                borderColor:     tipo === t ? '#5A1E2A' : '#E2D9C8',
+                borderColor:     tipo === t ? '#5A1220' : '#E2D9C8',
               }}
             >
               {t === 'PF' ? 'Pessoa Física' : 'Pessoa Jurídica'}
@@ -255,7 +255,7 @@ export default function StepCreedor({ defaultValues, onNext }: Props) {
               />
               {cepLoading && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <Search size={14} className="animate-pulse" style={{ color: '#B89C5C' }} />
+                  <Search size={14} className="animate-pulse" style={{ color: '#B79A5A' }} />
                 </div>
               )}
             </div>
@@ -337,9 +337,9 @@ export default function StepCreedor({ defaultValues, onNext }: Props) {
           type="submit"
           className="px-8 py-2.5 rounded font-montserrat text-sm font-semibold text-white
                      transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2"
-          style={{ backgroundColor: '#5A1E2A', '--tw-ring-color': '#5A1E2A' } as React.CSSProperties}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}
+          style={{ backgroundColor: '#5A1220', '--tw-ring-color': '#5A1220' } as React.CSSProperties}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B79A5A' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1220' }}
         >
           Próximo →
         </button>

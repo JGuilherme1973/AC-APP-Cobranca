@@ -52,11 +52,11 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
                   className="w-10 h-10 rounded-full flex items-center justify-center
                              transition-all duration-300 border-2"
                   style={{
-                    backgroundColor: done    ? '#5A1E2A'
-                                   : active  ? '#B89C5C'
+                    backgroundColor: done    ? '#5A1220'
+                                   : active  ? '#B79A5A'
                                    : 'white',
-                    borderColor:     done    ? '#5A1E2A'
-                                   : active  ? '#B89C5C'
+                    borderColor:     done    ? '#5A1220'
+                                   : active  ? '#B79A5A'
                                    : '#E2D9C8',
                   }}
                 >
@@ -64,14 +64,14 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
                     <CheckCircle2 size={18} color="white" />
                   ) : (
                     <Icon size={16}
-                      color={active ? '#0D1B2A' : '#C0C0C0'} />
+                      color={active ? '#0E1B2A' : '#C0C0C0'} />
                   )}
                 </div>
                 <div className="text-center">
                   <p
                     className="font-montserrat text-xs font-bold leading-tight"
                     style={{
-                      color: done ? '#5A1E2A' : active ? '#B89C5C' : '#9B9B9B',
+                      color: done ? '#5A1220' : active ? '#B79A5A' : '#9B9B9B',
                     }}
                   >
                     {step.label}
@@ -87,7 +87,7 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
               {i < STEPS.length - 1 && (
                 <div
                   className="flex-1 h-0.5 mx-3 mb-5 transition-all duration-300"
-                  style={{ backgroundColor: i < currentStep ? '#5A1E2A' : '#E2D9C8' }}
+                  style={{ backgroundColor: i < currentStep ? '#5A1220' : '#E2D9C8' }}
                 />
               )}
             </div>
@@ -98,7 +98,7 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
       {/* Mobile — resumo compacto */}
       <div className="md:hidden">
         <div className="flex items-center justify-between mb-2">
-          <p className="font-montserrat text-sm font-bold" style={{ color: '#5A1E2A' }}>
+          <p className="font-montserrat text-sm font-bold" style={{ color: '#5A1220' }}>
             {STEPS[currentStep].label}
           </p>
           <span className="font-montserrat text-xs" style={{ color: '#9B9B9B' }}>
@@ -112,8 +112,8 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
               className="flex-1 h-1.5 rounded-full transition-all duration-300"
               style={{
                 backgroundColor:
-                  i < currentStep  ? '#5A1E2A'
-                : i === currentStep ? '#B89C5C'
+                  i < currentStep  ? '#5A1220'
+                : i === currentStep ? '#B79A5A'
                 : '#E2D9C8',
               }}
             />
@@ -182,7 +182,7 @@ export default function NovoCaso() {
     <div className="max-w-3xl mx-auto">
       {/* Cabeçalho da página */}
       <div className="mb-6">
-        <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1E2A' }}>
+        <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1220' }}>
           Novo Caso
         </h1>
         <p className="font-lato text-sm mt-0.5" style={{ color: '#9B9B9B' }}>
@@ -209,14 +209,14 @@ export default function NovoCaso() {
               return (
                 <div
                   className="w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{ backgroundColor: '#5A1E2A' }}
+                  style={{ backgroundColor: '#5A1220' }}
                 >
-                  <Icon size={16} color="#B89C5C" />
+                  <Icon size={16} color="#B79A5A" />
                 </div>
               )
             })()}
             <div>
-              <h2 className="font-cinzel text-lg font-semibold" style={{ color: '#5A1E2A' }}>
+              <h2 className="font-cinzel text-lg font-semibold" style={{ color: '#5A1220' }}>
                 {STEPS[step].label}
               </h2>
               <p className="font-lato text-xs" style={{ color: '#9B9B9B' }}>

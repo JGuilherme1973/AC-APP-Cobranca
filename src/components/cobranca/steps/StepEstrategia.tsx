@@ -51,7 +51,7 @@ function Field({
     <div>
       <label className="block font-montserrat text-xs font-semibold uppercase tracking-wide mb-1.5"
         style={{ color: error ? '#991B1B' : '#1A1A1A' }}>
-        {label}{required && <span className="ml-1" style={{ color: '#5A1E2A' }}>*</span>}
+        {label}{required && <span className="ml-1" style={{ color: '#5A1220' }}>*</span>}
       </label>
       {children}
       {error && (
@@ -69,7 +69,7 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement> & { error?:
     <select
       {...rest}
       className={`w-full border rounded px-3 py-2.5 text-sm font-lato bg-white
-        focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors ${className}`}
+        focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors ${className}`}
       style={{ borderColor: error ? '#FECACA' : '#E2D9C8', color: '#1A1A1A' }}
     >
       {children}
@@ -158,7 +158,7 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
             {loadingAdv ? (
               <div className="flex items-center gap-2 px-3 py-2.5 border rounded"
                 style={{ borderColor: '#E2D9C8' }}>
-                <Loader2 size={14} className="animate-spin" style={{ color: '#B89C5C' }} />
+                <Loader2 size={14} className="animate-spin" style={{ color: '#B79A5A' }} />
                 <span className="font-lato text-sm" style={{ color: '#9B9B9B' }}>
                   Carregando advogados...
                 </span>
@@ -186,7 +186,7 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
       <div className="mt-6">
         <p className="font-montserrat text-xs font-semibold uppercase tracking-wide mb-3"
           style={{ color: '#1A1A1A' }}>
-          Etapa Inicial do Fluxo <span style={{ color: '#5A1E2A' }}>*</span>
+          Etapa Inicial do Fluxo <span style={{ color: '#5A1220' }}>*</span>
         </p>
         <div className="space-y-2">
           {ETAPA_OPCOES.map((opt, i) => (
@@ -196,16 +196,16 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
               onClick={() => setValue('etapa_atual', opt.value, { shouldValidate: true })}
               className="w-full text-left flex items-center gap-4 px-4 py-3 rounded border transition-all"
               style={{
-                backgroundColor: etapaAtual === opt.value ? '#5A1E2A' : 'white',
-                borderColor:     etapaAtual === opt.value ? '#5A1E2A' : '#E2D9C8',
+                backgroundColor: etapaAtual === opt.value ? '#5A1220' : 'white',
+                borderColor:     etapaAtual === opt.value ? '#5A1220' : '#E2D9C8',
               }}
             >
               <div
                 className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0
                            font-montserrat font-bold text-xs"
                 style={{
-                  backgroundColor: etapaAtual === opt.value ? '#B89C5C' : '#E2D9C8',
-                  color:           etapaAtual === opt.value ? '#5A1E2A' : '#6B6B6B',
+                  backgroundColor: etapaAtual === opt.value ? '#B79A5A' : '#E2D9C8',
+                  color:           etapaAtual === opt.value ? '#5A1220' : '#6B6B6B',
                 }}
               >
                 {i + 1}
@@ -221,7 +221,7 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
                 </p>
               </div>
               {etapaAtual === opt.value && (
-                <CheckCircle2 size={18} className="ml-auto flex-shrink-0" style={{ color: '#B89C5C' }} />
+                <CheckCircle2 size={18} className="ml-auto flex-shrink-0" style={{ color: '#B79A5A' }} />
               )}
             </button>
           ))}
@@ -236,7 +236,7 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
             rows={4}
             placeholder="Anotações estratégicas, contexto do caso, informações sensíveis..."
             className="w-full border rounded px-3 py-2.5 text-sm font-lato bg-white resize-none
-              focus:outline-none focus:ring-2 focus:ring-[#5A1E2A] transition-colors"
+              focus:outline-none focus:ring-2 focus:ring-[#5A1220] transition-colors"
             style={{ borderColor: '#E2D9C8', color: '#1A1A1A' }}
           />
         </Field>
@@ -262,14 +262,14 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
           disabled={submitting}
           className="px-7 py-2.5 rounded font-montserrat text-sm font-semibold
                      transition-colors border disabled:opacity-50"
-          style={{ borderColor: '#5A1E2A', color: '#5A1E2A', backgroundColor: 'white' }}
+          style={{ borderColor: '#5A1220', color: '#5A1220', backgroundColor: 'white' }}
           onMouseEnter={e => {
             if (!submitting) Object.assign((e.currentTarget as HTMLButtonElement).style,
-              { backgroundColor: '#5A1E2A', color: 'white' })
+              { backgroundColor: '#5A1220', color: 'white' })
           }}
           onMouseLeave={e => {
             Object.assign((e.currentTarget as HTMLButtonElement).style,
-              { backgroundColor: 'white', color: '#5A1E2A' })
+              { backgroundColor: 'white', color: '#5A1220' })
           }}
         >
           ← Anterior
@@ -281,14 +281,14 @@ export default function StepEstrategia({ defaultValues, submitting, erro, onBack
           className="flex items-center gap-2 px-8 py-2.5 rounded font-montserrat text-sm
                      font-semibold transition-colors disabled:cursor-not-allowed"
           style={{
-            backgroundColor: submitting ? '#8B7340' : '#B89C5C',
-            color: '#0D1B2A',
+            backgroundColor: submitting ? '#8B7340' : '#B79A5A',
+            color: '#0E1B2A',
           }}
           onMouseEnter={e => {
             if (!submitting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#C8AE6C'
           }}
           onMouseLeave={e => {
-            if (!submitting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C'
+            if (!submitting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B79A5A'
           }}
         >
           {submitting ? (
