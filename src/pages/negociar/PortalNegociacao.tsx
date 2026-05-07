@@ -13,6 +13,8 @@ import { format, addDays } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { supabase } from '@/lib/supabase'
 import { gerarConfissaoDivida, downloadConfissao } from '@/lib/regua/confissaoDivida'
+import VindexLogo from '@/components/brand/VindexLogo'
+import VindexIcon from '@/components/brand/VindexIcon'
 
 // ── Tipos ──────────────────────────────────────────────────────
 
@@ -36,9 +38,11 @@ type Etapa = 'carregando' | 'exibindo' | 'confirmando' | 'concluido' | 'erro' | 
 
 // ── Helpers ────────────────────────────────────────────────────
 
-const COR_NAVY  = '#0E1B2A'
-const COR_OURO  = '#B79A5A'
-const COR_VINHO = '#5A1220'
+const COR_NAVY   = '#0E1B2A'
+const COR_NAVY_2 = '#0a1420'
+const COR_NAVY_3 = '#06101a'
+const COR_OURO   = '#B79A5A'
+const COR_VINHO  = '#5A1220'
 
 function fmt(valor: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor)
@@ -52,7 +56,7 @@ function calcularDesconto(valor: number, pct: number): number {
 
 function TelaCarregando() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ backgroundColor: COR_NAVY }}>
+    <div className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ backgroundColor: COR_NAVY_3 }}>
       <Loader2 size={40} className="animate-spin" style={{ color: COR_OURO }} />
       <p className="text-sm" style={{ color: '#9ca3af' }}>Verificando seu link…</p>
     </div>
@@ -64,13 +68,23 @@ function TelaCarregando() {
 function TelaErro({ tipo, mensagem }: { tipo: 'erro' | 'expirado' | 'usado'; mensagem: string }) {
   const icone = tipo === 'usado'
     ? <CheckCircle2 size={48} style={{ color: COR_OURO }} />
-    : <AlertTriangle size={48} style={{ color: '#ef4444' }} />
+    : tipo === 'expirado'
+      ? <div style={{ opacity: 0.4 }}><VindexIcon size={48} variant="gold" /></div>
+      : <AlertTriangle size={48} style={{ color: '#ef4444' }} />
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-5 p-6 text-center" style={{ backgroundColor: COR_NAVY }}>
+      <VindexLogo variant="vertical" theme="dark" size="sm" />
       {icone}
       <div>
-        <h2 className="font-bold text-lg mb-2" style={{ color: tipo === 'usado' ? COR_OURO : '#f87171' }}>
+        <h2
+          className="font-bold mb-2"
+          style={{
+            fontFamily: 'Cinzel, serif',
+            fontSize: 20,
+            color: tipo === 'usado' ? COR_OURO : tipo === 'expirado' ? '#666' : '#f87171',
+          }}
+        >
           {tipo === 'expirado' ? 'Link Expirado'
            : tipo === 'usado'  ? 'Acordo Já Registrado'
            : 'Link Inválido'}
@@ -79,13 +93,30 @@ function TelaErro({ tipo, mensagem }: { tipo: 'erro' | 'expirado' | 'usado'; men
       </div>
       <div
         className="mt-4 px-4 py-3 rounded-lg text-xs text-center max-w-sm"
-        style={{ backgroundColor: '#0a1520', border: `1px solid ${COR_OURO}33`, color: '#9ca3af' }}
+        style={{ backgroundColor: COR_NAVY_2, border: `1px solid ${COR_OURO}33`, color: '#9ca3af' }}
       >
         Em caso de dúvidas, entre em contato com o escritório:<br />
         <a href="mailto:jgac@cintraadvogados.com.br" style={{ color: COR_OURO }}>
           jgac@cintraadvogados.com.br
         </a>
       </div>
+      <a
+        href="https://wa.me/5511999999999"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-5 py-3 text-sm"
+        style={{
+          backgroundColor: '#25d366',
+          color: '#fff',
+          borderRadius: 8,
+          fontFamily: 'Montserrat, sans-serif',
+          fontWeight: 700,
+          textDecoration: 'none',
+          display: 'inline-block',
+        }}
+      >
+        Falar pelo WhatsApp
+      </a>
     </div>
   )
 }
@@ -94,20 +125,27 @@ function TelaErro({ tipo, mensagem }: { tipo: 'erro' | 'expirado' | 'usado'; men
 
 function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: string; pdf: ArrayBuffer | null }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-6 text-center" style={{ backgroundColor: COR_NAVY }}>
+    <div className="flex flex-col items-center justify-center min-h-screen gap-6 p-6 text-center" style={{ backgroundColor: COR_NAVY_3 }}>
+      <div style={{ margin: '0 auto' }}>
+        <VindexIcon size={60} variant="gold" />
+      </div>
+
       <div
-        className="w-20 h-20 rounded-full flex items-center justify-center"
-        style={{ backgroundColor: '#14532d33', border: '2px solid #22c55e' }}
+        className="w-16 h-16 rounded-full flex items-center justify-center"
+        style={{ backgroundColor: `${COR_OURO}1A`, border: `2px solid ${COR_OURO}` }}
       >
-        <CheckCircle2 size={40} style={{ color: '#22c55e' }} />
+        <CheckCircle2 size={32} style={{ color: COR_OURO }} />
       </div>
 
       <div>
-        <h2 className="font-bold text-xl mb-2" style={{ color: COR_OURO }}>
-          Acordo Confirmado!
+        <h2
+          className="font-bold mb-2"
+          style={{ fontFamily: 'Cinzel, serif', fontSize: 22, color: COR_OURO }}
+        >
+          Acordo Registrado
         </h2>
-        <p className="text-sm" style={{ color: '#d1d5db' }}>
-          Obrigado, <strong>{dados.devedor_nome}</strong>. Seu acordo foi registrado com sucesso.
+        <p className="text-sm" style={{ fontFamily: 'Lato, sans-serif', fontSize: 14, color: '#C7CBD1' }}>
+          Sua confissão de dívida foi gerada.
         </p>
         <p className="text-xs mt-1" style={{ color: '#6b7280' }}>
           Protocolo: {acordoId.slice(0, 8).toUpperCase()}
@@ -116,7 +154,7 @@ function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: s
 
       <div
         className="w-full max-w-sm rounded-xl p-4 text-left text-sm"
-        style={{ backgroundColor: '#0a1520', border: `1px solid ${COR_OURO}33` }}
+        style={{ backgroundColor: COR_NAVY_2, border: `1px solid ${COR_OURO}33` }}
       >
         <p className="text-xs font-medium mb-2" style={{ color: COR_OURO }}>Próximos Passos</p>
         <ul className="space-y-1.5 text-xs" style={{ color: '#9ca3af' }}>
@@ -129,13 +167,27 @@ function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: s
       {pdf && (
         <button
           onClick={() => downloadConfissao(pdf, dados.devedor_nome)}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-colors hover:opacity-80"
-          style={{ backgroundColor: COR_OURO, color: COR_NAVY }}
+          className="flex items-center gap-2 transition-opacity hover:opacity-80"
+          style={{
+            backgroundColor: COR_OURO,
+            color: COR_NAVY,
+            fontFamily: 'Cinzel, serif',
+            fontWeight: 700,
+            fontSize: 13,
+            padding: '14px 24px',
+            borderRadius: 6,
+            border: 'none',
+            cursor: 'pointer',
+          }}
         >
           <Download size={15} />
           Baixar Confissão de Dívida (PDF)
         </button>
       )}
+
+      <div style={{ marginTop: 40, opacity: 0.6 }}>
+        <VindexLogo variant="vertical" theme="dark" size="sm" />
+      </div>
     </div>
   )
 }
@@ -264,76 +316,154 @@ export default function PortalNegociacao() {
   const valorAcordo   = dados.valor_atualizado - valorDesconto
   const valorParcela  = tipoAcordo === 'parcelado' ? valorAcordo / numParcelas : valorAcordo
   const primeiroVenc  = format(addDays(new Date(), 3), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+  const dataAtualizada = format(new Date(), "dd/MM/yyyy", { locale: ptBR })
 
   // ── Render principal ──────────────────────────────────────────
 
   return (
-    <div className="min-h-screen pb-10" style={{ backgroundColor: COR_NAVY }}>
+    <div className="min-h-screen pb-10" style={{ backgroundColor: COR_NAVY_3 }}>
 
-      {/* Header VINDEX */}
-      <div style={{ backgroundColor: '#060e18', borderBottom: `2px solid ${COR_OURO}33` }}>
-        <div className="max-w-lg mx-auto px-6 py-4 flex items-center justify-between">
-          <div>
-            <span className="font-bold text-lg tracking-widest" style={{ color: COR_OURO }}>VINDEX</span>
-            <span className="text-xs ml-2" style={{ color: '#6b7280' }}>Portal de Renegociação</span>
-          </div>
-          <div className="flex items-center gap-1.5 text-xs" style={{ color: '#4ade80' }}>
-            <Shield size={12} />
-            Ambiente seguro
-          </div>
+      {/* Top section — full width, COR_NAVY background */}
+      <div style={{ backgroundColor: COR_NAVY, padding: '32px 24px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <VindexLogo variant="vertical" theme="dark" size="lg" />
         </div>
+        <p style={{
+          fontFamily: 'Cinzel, serif',
+          fontSize: 9,
+          letterSpacing: 3,
+          color: COR_OURO,
+          opacity: 0.6,
+          marginTop: 12,
+          textTransform: 'uppercase',
+        }}>
+          DIREITO QUE RECUPERA. ESTRATÉGIA QUE PROTEGE.
+        </p>
       </div>
 
-      <div className="max-w-lg mx-auto px-5 pt-6 space-y-5">
+      {/* Main card */}
+      <div style={{
+        maxWidth: 520,
+        margin: '32px auto 0',
+        padding: '0 16px',
+      }}>
+        <div style={{
+          backgroundColor: COR_NAVY_2,
+          border: `1px solid rgba(183,154,90,0.25)`,
+          borderTop: `3px solid ${COR_OURO}`,
+          borderRadius: 12,
+          padding: 36,
+        }}>
 
-        {/* Saudação */}
-        <div
-          className="rounded-xl p-5"
-          style={{ backgroundColor: '#0a1520', border: `1px solid ${COR_OURO}33` }}
-        >
-          <p className="text-xs mb-1" style={{ color: '#6b7280' }}>Olá,</p>
-          <h1 className="font-bold text-lg" style={{ color: COR_OURO }}>{dados.devedor_nome}</h1>
-          <p className="text-sm mt-2" style={{ color: '#9ca3af' }}>
-            {dados.credor_nome} disponibilizou uma proposta especial para regularização do seu débito.
-            Confira as condições e confirme seu acordo abaixo.
+          {/* Title + devedor */}
+          <h1 style={{
+            fontFamily: 'Cinzel, serif',
+            fontSize: 20,
+            color: '#F6F2EC',
+            margin: 0,
+          }}>
+            Proposta de Regularização
+          </h1>
+          <p style={{
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: 14,
+            color: COR_OURO,
+            marginTop: 6,
+            marginBottom: 0,
+          }}>
+            {dados.devedor_nome}
           </p>
-        </div>
 
-        {/* Resumo do débito */}
-        <div
-          className="rounded-xl overflow-hidden"
-          style={{ border: `1px solid ${COR_OURO}33` }}
-        >
-          <div className="px-4 py-3" style={{ backgroundColor: '#060e18' }}>
-            <span className="text-xs font-medium" style={{ color: COR_OURO }}>Resumo do Débito</span>
+          {/* Separator */}
+          <div style={{
+            height: 1,
+            backgroundColor: 'rgba(183,154,90,0.2)',
+            margin: '20px 0',
+          }} />
+
+          {/* Valor em aberto */}
+          <div>
+            <p style={{
+              fontFamily: 'Montserrat, sans-serif',
+              fontSize: 10,
+              color: '#666',
+              textTransform: 'uppercase',
+              letterSpacing: 1,
+              margin: 0,
+            }}>
+              VALOR EM ABERTO
+            </p>
+            <p style={{
+              fontFamily: 'Cinzel, serif',
+              fontWeight: 700,
+              fontSize: 28,
+              color: '#F6F2EC',
+              margin: '4px 0 2px',
+            }}>
+              {fmt(dados.valor_atualizado)}
+            </p>
+            <p style={{
+              fontFamily: 'Lato, sans-serif',
+              fontSize: 11,
+              color: '#555',
+              margin: 0,
+            }}>
+              atualizado em {dataAtualizada}
+            </p>
           </div>
-          <div className="divide-y divide-gray-800" style={{ backgroundColor: '#0a1520' }}>
+
+          {/* Separator */}
+          <div style={{
+            height: 1,
+            backgroundColor: 'rgba(183,154,90,0.2)',
+            margin: '20px 0',
+          }} />
+
+          {/* Resumo do débito detalhado */}
+          <div style={{
+            backgroundColor: COR_NAVY_3,
+            border: `1px solid rgba(183,154,90,0.15)`,
+            borderRadius: 8,
+            overflow: 'hidden',
+            marginBottom: 20,
+          }}>
             {[
               ['Credor',           dados.credor_nome],
               ['Valor original',   fmt(dados.valor_original)],
               ['Vencimento',       format(new Date(dados.data_vencimento + 'T12:00:00'), 'dd/MM/yyyy')],
               ['Valor atualizado', fmt(dados.valor_atualizado)],
-            ].map(([k, v]) => (
-              <div key={k} className="flex justify-between px-4 py-2.5 text-sm">
-                <span style={{ color: '#6b7280' }}>{k}</span>
-                <span style={{ color: '#d1d5db' }}>{v}</span>
+            ].map(([k, v], idx) => (
+              <div key={k} style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                padding: '10px 16px',
+                borderTop: idx === 0 ? 'none' : '1px solid rgba(255,255,255,0.05)',
+              }}>
+                <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: 12, color: '#666' }}>{k}</span>
+                <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#d1d5db' }}>{v}</span>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Proposta */}
-        <div
-          className="rounded-xl p-5 space-y-4"
-          style={{ backgroundColor: '#0a1520', border: `1px solid ${COR_OURO}33` }}
-        >
-          <p className="text-sm font-medium" style={{ color: COR_OURO }}>Monte sua Proposta</p>
+          {/* Monte sua proposta */}
+          <p style={{
+            fontFamily: 'Montserrat, sans-serif',
+            fontSize: 11,
+            color: COR_OURO,
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+            margin: '0 0 16px',
+          }}>
+            Monte sua Proposta
+          </p>
 
-          {/* Desconto */}
-          <div>
-            <div className="flex justify-between text-xs mb-1" style={{ color: '#9ca3af' }}>
-              <span>Desconto especial</span>
-              <span style={{ color: COR_OURO }}>{descontoPct}% = {fmt(valorDesconto)}</span>
+          {/* Desconto slider */}
+          <div style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#9ca3af' }}>Desconto especial</span>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: COR_OURO }}>
+                {descontoPct}% = {fmt(valorDesconto)}
+              </span>
             </div>
             <input
               type="range" min={5} max={40} step={5}
@@ -342,22 +472,29 @@ export default function PortalNegociacao() {
               className="w-full h-2 rounded-full appearance-none cursor-pointer"
               style={{ accentColor: COR_OURO }}
             />
-            <div className="flex justify-between text-xs mt-0.5" style={{ color: '#4b5563' }}>
-              <span>5%</span><span>40%</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 11, color: '#4b5563' }}>5%</span>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 11, color: '#4b5563' }}>40%</span>
             </div>
           </div>
 
-          {/* Tipo */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Tipo À vista / Parcelado */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
             {(['avista', 'parcelado'] as const).map(tipo => (
               <button
                 key={tipo}
                 onClick={() => setTipoAcordo(tipo)}
-                className="py-2 rounded-lg text-sm font-medium border transition-colors"
                 style={{
-                  backgroundColor: tipoAcordo === tipo ? COR_OURO + '22' : 'transparent',
-                  borderColor:     tipoAcordo === tipo ? COR_OURO : '#374151',
-                  color:           tipoAcordo === tipo ? COR_OURO : '#6b7280',
+                  padding: '10px 0',
+                  borderRadius: 6,
+                  border: `1px solid ${tipoAcordo === tipo ? COR_OURO : '#374151'}`,
+                  backgroundColor: tipoAcordo === tipo ? `${COR_OURO}22` : 'transparent',
+                  color: tipoAcordo === tipo ? COR_OURO : '#6b7280',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
                 }}
               >
                 {tipo === 'avista' ? 'À Vista' : 'Parcelado'}
@@ -367,20 +504,31 @@ export default function PortalNegociacao() {
 
           {/* Parcelas */}
           {tipoAcordo === 'parcelado' && (
-            <div>
-              <label className="block text-xs mb-1.5" style={{ color: '#9ca3af' }}>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{
+                display: 'block',
+                fontFamily: 'Montserrat, sans-serif',
+                fontSize: 11,
+                color: '#9ca3af',
+                marginBottom: 8,
+              }}>
                 Número de parcelas
               </label>
-              <div className="grid grid-cols-4 gap-1.5">
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
                 {[2, 3, 6, 12].map(n => (
                   <button
                     key={n}
                     onClick={() => setNumParcelas(n)}
-                    className="py-1.5 rounded-lg text-sm font-medium border transition-colors"
                     style={{
-                      backgroundColor: numParcelas === n ? COR_OURO + '22' : 'transparent',
-                      borderColor:     numParcelas === n ? COR_OURO : '#374151',
-                      color:           numParcelas === n ? COR_OURO : '#6b7280',
+                      padding: '8px 0',
+                      borderRadius: 6,
+                      border: `1px solid ${numParcelas === n ? COR_OURO : '#374151'}`,
+                      backgroundColor: numParcelas === n ? `${COR_OURO}22` : 'transparent',
+                      color: numParcelas === n ? COR_OURO : '#6b7280',
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontSize: 13,
+                      fontWeight: 600,
+                      cursor: 'pointer',
                     }}
                   >
                     {n}x
@@ -390,35 +538,59 @@ export default function PortalNegociacao() {
             </div>
           )}
 
-          {/* Resumo */}
-          <div
-            className="rounded-lg p-4 space-y-2"
-            style={{ backgroundColor: '#060e18', border: `1px solid ${COR_OURO}44` }}
-          >
-            <div className="flex justify-between text-xs" style={{ color: '#6b7280' }}>
-              <span>Valor original</span>
-              <span>{fmt(dados.valor_atualizado)}</span>
+          {/* Resumo de valores */}
+          <div style={{
+            backgroundColor: COR_NAVY_3,
+            border: `1px solid rgba(183,154,90,0.27)`,
+            borderRadius: 8,
+            padding: 16,
+            marginBottom: 16,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#6b7280' }}>Valor original</span>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#6b7280' }}>{fmt(dados.valor_atualizado)}</span>
             </div>
-            <div className="flex justify-between text-xs" style={{ color: '#22c55e' }}>
-              <span>Desconto ({descontoPct}%)</span>
-              <span>− {fmt(valorDesconto)}</span>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#22c55e' }}>Desconto ({descontoPct}%)</span>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#22c55e' }}>− {fmt(valorDesconto)}</span>
             </div>
-            <div className="border-t border-gray-800 pt-2 flex justify-between font-bold text-sm" style={{ color: COR_OURO }}>
-              <span>
-                {tipoAcordo === 'avista'
-                  ? 'Total à vista'
-                  : `${numParcelas}x de`}
+            <div style={{
+              borderTop: '1px solid rgba(255,255,255,0.08)',
+              paddingTop: 10,
+              display: 'flex',
+              justifyContent: 'space-between',
+            }}>
+              <span style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: COR_OURO }}>
+                {tipoAcordo === 'avista' ? 'Total à vista' : `${numParcelas}x de`}
               </span>
-              <span>{fmt(valorParcela)}</span>
+              <span style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: COR_OURO }}>
+                {fmt(valorParcela)}
+              </span>
             </div>
-            <div className="text-xs text-center" style={{ color: '#4b5563' }}>
+            <div style={{
+              fontFamily: 'Lato, sans-serif',
+              fontSize: 11,
+              color: '#4b5563',
+              textAlign: 'center',
+              marginTop: 8,
+            }}>
               Primeiro vencimento: {primeiroVenc}
             </div>
           </div>
 
           {/* Pix automático */}
           {tipoAcordo === 'parcelado' && (
-            <label className="flex items-center gap-2 text-xs cursor-pointer select-none" style={{ color: '#9ca3af' }}>
+            <label style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              fontFamily: 'Lato, sans-serif',
+              fontSize: 12,
+              color: '#9ca3af',
+              cursor: 'pointer',
+              userSelect: 'none',
+              marginBottom: 16,
+            }}>
               <input
                 type="checkbox"
                 checked={pixAuto}
@@ -429,68 +601,180 @@ export default function PortalNegociacao() {
               Autorizar débito automático via Pix (parcelas mensais)
             </label>
           )}
-        </div>
 
-        {/* LGPD disclaimer */}
-        <div
-          className="flex items-start gap-2 px-3 py-2.5 rounded-lg text-xs"
-          style={{ backgroundColor: '#0a1520', border: '1px solid #1e3a5f', color: '#6b7280' }}
-        >
-          <Shield size={12} className="mt-0.5 shrink-0" />
-          <span>
-            Ao confirmar, você consente com o tratamento dos seus dados para fins de cobrança,
-            nos termos do Art. 7º, V da <strong>LGPD (Lei 13.709/2018)</strong>.
-            Seus dados são protegidos e utilizados exclusivamente por ANDRADE & CINTRA Advogados.
-          </span>
-        </div>
-
-        {/* Botão confirmar */}
-        {etapa === 'confirmando' ? (
-          <div
-            className="rounded-xl p-5 text-center"
-            style={{ backgroundColor: '#0a1520', border: `1px solid ${COR_OURO}33` }}
-          >
-            <p className="text-sm mb-3" style={{ color: '#d1d5db' }}>
-              Confirme seu acordo:
-              <br />
-              <strong style={{ color: COR_OURO }}>
-                {tipoAcordo === 'avista'
-                  ? `${fmt(valorAcordo)} à vista`
-                  : `${numParcelas}x de ${fmt(valorParcela)}`}
-              </strong>
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setEtapa('exibindo')}
-                disabled={loading}
-                className="flex-1 py-2.5 rounded-xl text-sm border transition-colors"
-                style={{ borderColor: '#374151', color: '#6b7280' }}
-              >
-                Voltar
-              </button>
-              <button
-                onClick={confirmarAcordo}
-                disabled={loading}
-                className="flex-1 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors hover:opacity-80"
-                style={{ backgroundColor: COR_VINHO, color: 'white' }}
-              >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
-                {loading ? 'Registrando…' : 'Confirmar Acordo'}
-              </button>
-            </div>
+          {/* LGPD disclaimer */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 8,
+            padding: '10px 12px',
+            borderRadius: 6,
+            backgroundColor: COR_NAVY_3,
+            border: '1px solid #1e3a5f',
+            color: '#6b7280',
+            fontFamily: 'Lato, sans-serif',
+            fontSize: 11,
+            marginBottom: 20,
+          }}>
+            <Shield size={12} style={{ marginTop: 2, flexShrink: 0 }} />
+            <span>
+              Ao confirmar, você consente com o tratamento dos seus dados para fins de cobrança,
+              nos termos do Art. 7º, V da <strong>LGPD (Lei 13.709/2018)</strong>.
+              Seus dados são protegidos e utilizados exclusivamente por ANDRADE & CINTRA Advogados.
+            </span>
           </div>
-        ) : (
-          <button
-            onClick={() => setEtapa('confirmando')}
-            className="w-full py-3.5 rounded-xl text-base font-bold transition-colors hover:opacity-80"
-            style={{ backgroundColor: COR_OURO, color: COR_NAVY }}
-          >
-            Aceitar Proposta
-          </button>
-        )}
+
+          {/* Botões de ação */}
+          {etapa === 'confirmando' ? (
+            <div style={{
+              backgroundColor: COR_NAVY_3,
+              border: `1px solid rgba(183,154,90,0.25)`,
+              borderRadius: 8,
+              padding: 20,
+              textAlign: 'center',
+            }}>
+              <p style={{ fontFamily: 'Lato, sans-serif', fontSize: 13, color: '#d1d5db', marginBottom: 16 }}>
+                Confirme seu acordo:<br />
+                <strong style={{ color: COR_OURO }}>
+                  {tipoAcordo === 'avista'
+                    ? `${fmt(valorAcordo)} à vista`
+                    : `${numParcelas}x de ${fmt(valorParcela)}`}
+                </strong>
+              </p>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button
+                  onClick={() => setEtapa('exibindo')}
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    padding: '10px 0',
+                    borderRadius: 6,
+                    border: '1px solid #374151',
+                    backgroundColor: 'transparent',
+                    color: '#6b7280',
+                    fontFamily: 'Montserrat, sans-serif',
+                    fontSize: 13,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Voltar
+                </button>
+                <button
+                  onClick={confirmarAcordo}
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    padding: '10px 0',
+                    borderRadius: 6,
+                    border: 'none',
+                    backgroundColor: COR_VINHO,
+                    color: 'white',
+                    fontFamily: 'Cinzel, serif',
+                    fontWeight: 700,
+                    fontSize: 13,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 8,
+                    opacity: loading ? 0.7 : 1,
+                  }}
+                >
+                  {loading ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
+                  {loading ? 'Registrando…' : 'Confirmar Acordo'}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Botão 1 — Pagar à vista */}
+              <button
+                onClick={() => { setTipoAcordo('avista'); setEtapa('confirmando') }}
+                style={{
+                  width: '100%',
+                  padding: 16,
+                  borderRadius: 6,
+                  border: 'none',
+                  backgroundColor: COR_OURO,
+                  color: COR_NAVY,
+                  fontFamily: 'Cinzel, serif',
+                  fontWeight: 700,
+                  fontSize: 13,
+                  letterSpacing: 2,
+                  cursor: 'pointer',
+                  marginTop: 20,
+                  textTransform: 'uppercase',
+                }}
+              >
+                PAGAR À VISTA COM PIX
+                {descontoPct > 0 && (
+                  <div style={{
+                    fontFamily: 'Lato, sans-serif',
+                    fontSize: 11,
+                    color: COR_NAVY,
+                    opacity: 0.8,
+                    marginTop: 4,
+                    fontWeight: 400,
+                    letterSpacing: 0,
+                    textTransform: 'none',
+                  }}>
+                    Desconto de {descontoPct}% — Economia de {fmt(valorDesconto)}
+                  </div>
+                )}
+              </button>
+
+              {/* Botão 2 — Parcelar */}
+              <button
+                onClick={() => { setTipoAcordo('parcelado'); setEtapa('confirmando') }}
+                style={{
+                  width: '100%',
+                  padding: 14,
+                  borderRadius: 6,
+                  border: `1px solid ${COR_VINHO}`,
+                  backgroundColor: 'transparent',
+                  color: '#F6F2EC',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: 13,
+                  cursor: 'pointer',
+                  marginTop: 12,
+                }}
+              >
+                Parcelar em até {numParcelas}x
+              </button>
+
+              {/* Botão 3 — WhatsApp */}
+              <a
+                href="https://wa.me/5511999999999"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  padding: 12,
+                  borderRadius: 6,
+                  border: `1px solid rgba(183,154,90,0.2)`,
+                  backgroundColor: 'transparent',
+                  color: '#666',
+                  fontFamily: 'Lato, sans-serif',
+                  fontSize: 12,
+                  cursor: 'pointer',
+                  marginTop: 8,
+                  textAlign: 'center',
+                  textDecoration: 'none',
+                  boxSizing: 'border-box',
+                }}
+              >
+                Falar com o escritório pelo WhatsApp
+              </a>
+            </>
+          )}
+        </div>
 
         {/* Rodapé */}
-        <p className="text-center text-xs pb-4" style={{ color: '#374151' }}>
+        <p className="text-center text-xs pb-4 mt-6" style={{
+          fontFamily: 'Lato, sans-serif',
+          color: '#374151',
+        }}>
           ANDRADE & CINTRA Advogados · VINDEX · jgac@cintraadvogados.com.br
         </p>
       </div>
