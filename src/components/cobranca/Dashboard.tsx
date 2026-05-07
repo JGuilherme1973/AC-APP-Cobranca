@@ -499,7 +499,7 @@ export default function Dashboard() {
                     axisLine={false}
                     tickLine={false}
                   />
-                  <Tooltip content={<PipelineTooltip />} cursor={{ fill: 'rgba(184,156,92,0.06)' }} />
+                  <Tooltip content={<PipelineTooltip />} cursor={{ fill: 'rgba(183,154,90,0.06)' }} />
                   <Bar dataKey="quantidade" radius={[3, 3, 0, 0]}>
                     {pipelineData.map((entry, index) => (
                       <Cell key={index} fill={entry.cor} />
