@@ -105,6 +105,74 @@ supabase/
 
 ---
 
+## Configuração iugu (Módulo A — Pagamentos)
+
+### 1. Criar conta sandbox em iugu
+
+Acesse [iugu.com/developers](https://iugu.com/developers) e crie uma conta.
+No painel, vá em **Configurações → Modo Sandbox** e ative o sandbox para testes.
+
+### 2. Obter API Key e Account ID
+
+1. No painel iugu → **Configurações → Tokens e Chaves de API**
+2. Copie a **API Key** e o **Account ID**
+3. No `.env.local`, preencha:
+
+```env
+VITE_IUGU_API_KEY=sua_api_key_aqui
+VITE_IUGU_ACCOUNT_ID=seu_account_id_aqui
+VITE_IUGU_SANDBOX=true
+```
+
+### 3. Configurar webhook no painel iugu
+
+1. No painel iugu → **Configurações → Webhooks → Adicionar**
+2. Preencha:
+   - **URL:** `https://[SEU_PROJECT].supabase.co/functions/v1/webhook-iugu`
+   - **Eventos:** `invoice.status_changed`
+3. Copie o **Webhook Secret** gerado e adicione nas Supabase Secrets:
+
+```bash
+supabase secrets set IUGU_WEBHOOK_SECRET=seu_secret_aqui
+```
+
+### 4. Deploy da Edge Function de webhook
+
+```bash
+# Instalar Supabase CLI se necessário
+npm install -g supabase
+
+# Login e deploy
+supabase login
+supabase functions deploy webhook-iugu --project-ref SEU_PROJECT_REF
+```
+
+### 5. Testar Pix no sandbox iugu
+
+No painel iugu → **Sandbox → Simular Pagamento**:
+1. Gere um QR Code Pix pelo sistema
+2. Copie o `invoice_id` exibido no log do console
+3. No painel iugu sandbox, use **Simular Pix Pago** com esse invoice_id
+4. O webhook será disparado e o pagamento conciliado automaticamente
+
+### 6. Fluxo de conciliação
+
+```
+Usuário gera Pix/Boleto
+        ↓
+  iugu cria fatura → retorna QRCode/linha digitável
+        ↓
+  Sistema salva em cobrancas_financeiras (status: pendente)
+        ↓
+  Devedor paga → iugu dispara webhook POST para Edge Function
+        ↓
+  Edge Function valida HMAC-SHA256 → atualiza status → registra split
+        ↓
+  Timeline atualizada → negativação/protesto verificados automaticamente
+```
+
+---
+
 ## Módulos do MVP (Fase 1)
 
 | # | Módulo | Status |
