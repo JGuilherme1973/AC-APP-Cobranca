@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase'
 import Login from '@/pages/Login'
 import AppLayout from '@/components/layout/AppLayout'
 import Dashboard from '@/components/cobranca/Dashboard'
+import NovoCaso from '@/components/cobranca/NovoCaso'
 
 // Guard de rota autenticada
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -79,7 +80,7 @@ export default function App() {
         path="/cobranca/novo-caso"
         element={
           <ProtectedRoute>
-            <AppLayout><EmConstrucao titulo="Novo Caso" /></AppLayout>
+            <AppLayout><NovoCaso /></AppLayout>
           </ProtectedRoute>
         }
       />
