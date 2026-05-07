@@ -5,10 +5,12 @@ import type { Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import Login from '@/pages/Login'
 import AppLayout from '@/components/layout/AppLayout'
-import Dashboard from '@/components/cobranca/Dashboard'
-import NovoCaso   from '@/components/cobranca/NovoCaso'
-import FichaCaso  from '@/components/cobranca/FichaCaso'
-import ListaCasos from '@/components/cobranca/ListaCasos'
+import Dashboard          from '@/components/cobranca/Dashboard'
+import NovoCaso           from '@/components/cobranca/NovoCaso'
+import FichaCaso          from '@/components/cobranca/FichaCaso'
+import ListaCasos         from '@/components/cobranca/ListaCasos'
+import ConfiguracaoRegua  from '@/components/cobranca/ConfiguracaoRegua'
+import PortalNegociacao   from '@/pages/negociar/PortalNegociacao'
 
 // Guard de rota autenticada
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -55,9 +57,10 @@ function EmConstrucao({ titulo }: { titulo: string }) {
 export default function App() {
   return (
     <Routes>
-      {/* Pública */}
+      {/* Públicas */}
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/negociar/:token" element={<PortalNegociacao />} />
 
       {/* Autenticadas — dentro do AppLayout */}
       <Route
@@ -147,6 +150,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <AppLayout><EmConstrucao titulo="Configurações" /></AppLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/cobranca/regua"
+        element={
+          <ProtectedRoute>
+            <AppLayout><ConfiguracaoRegua /></AppLayout>
           </ProtectedRoute>
         }
       />
