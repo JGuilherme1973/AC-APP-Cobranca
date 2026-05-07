@@ -6,8 +6,9 @@ import { supabase } from '@/lib/supabase'
 import Login from '@/pages/Login'
 import AppLayout from '@/components/layout/AppLayout'
 import Dashboard from '@/components/cobranca/Dashboard'
-import NovoCaso from '@/components/cobranca/NovoCaso'
-import FichaCaso from '@/components/cobranca/FichaCaso'
+import NovoCaso   from '@/components/cobranca/NovoCaso'
+import FichaCaso  from '@/components/cobranca/FichaCaso'
+import ListaCasos from '@/components/cobranca/ListaCasos'
 
 // Guard de rota autenticada
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -73,7 +74,7 @@ export default function App() {
         path="/cobranca/casos"
         element={
           <ProtectedRoute>
-            <AppLayout><EmConstrucao titulo="Lista de Casos" /></AppLayout>
+            <AppLayout><ListaCasos /></AppLayout>
           </ProtectedRoute>
         }
       />
