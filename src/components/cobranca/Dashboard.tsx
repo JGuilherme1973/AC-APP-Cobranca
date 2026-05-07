@@ -8,6 +8,7 @@
  *   4. Tarefas urgentes — vencidas e para hoje
  */
 
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   BarChart,
@@ -51,11 +52,11 @@ const ETAPA_LABEL: Record<EtapaCaso, string> = {
 }
 
 const ETAPA_COR: Record<EtapaCaso, string> = {
-  DIAGNOSTICO:             '#B89C5C',
-  ESTRATEGIA:              '#8AA3BE',
-  COBRANCA_EXTRAJUDICIAL:  '#5A1E2A',
-  ACAO_JUDICIAL:           '#0D1B2A',
-  EXECUCAO_RECUPERACAO:    '#2D6A4F',
+  DIAGNOSTICO:             '#1e3a5a',
+  ESTRATEGIA:              '#2a4a2a',
+  COBRANCA_EXTRAJUDICIAL:  '#4a3a00',
+  ACAO_JUDICIAL:           '#3a1a00',
+  EXECUCAO_RECUPERACAO:    '#5A1220',
 }
 
 // ── Tooltip customizado do gráfico ───────────────────────────
@@ -71,9 +72,9 @@ function PipelineTooltip({ active, payload }: { active?: boolean; payload?: Tool
   return (
     <div
       className="px-3 py-2 rounded shadow-lg text-xs font-montserrat"
-      style={{ backgroundColor: '#0D1B2A', border: '1px solid rgba(184,156,92,0.3)', color: '#F5F5F5' }}
+      style={{ backgroundColor: '#0E1B2A', border: '1px solid rgba(183,154,90,0.3)', color: '#F5F5F5' }}
     >
-      <p className="font-semibold" style={{ color: '#B89C5C' }}>{d.etapa}</p>
+      <p className="font-semibold" style={{ color: '#B79A5A' }}>{d.etapa}</p>
       <p className="mt-0.5">{d.quantidade} caso{d.quantidade !== 1 ? 's' : ''}</p>
     </div>
   )
@@ -91,10 +92,19 @@ interface KpiCardProps {
 }
 
 function KpiCard({ titulo, valor, subtitulo, icon: Icon, iconBg, tendencia, loading }: KpiCardProps) {
+  const [hovered, setHovered] = React.useState(false)
   return (
     <div
-      className="bg-white rounded border p-5 flex items-start gap-4 shadow-sm"
-      style={{ borderColor: '#E2D9C8' }}
+      className="bg-white rounded p-5 flex items-start gap-4 shadow-sm"
+      style={{
+        border: '1px solid rgba(183,154,90,0.2)',
+        borderTop: '2px solid #B79A5A',
+        borderRadius: 10,
+        transition: 'border-color 150ms, transform 150ms',
+        ...(hovered ? { borderColor: 'rgba(183,154,90,0.55)', transform: 'translateY(-1px)' } : {}),
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       <div
         className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -103,14 +113,16 @@ function KpiCard({ titulo, valor, subtitulo, icon: Icon, iconBg, tendencia, load
         <Icon size={20} color="#F5F5F5" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="font-montserrat text-xs font-semibold uppercase tracking-wide truncate"
-          style={{ color: '#6B6B6B' }}>
+        <p
+          className="font-montserrat truncate uppercase"
+          style={{ fontSize: 10, color: '#B79A5A', letterSpacing: '1.5px' }}
+        >
           {titulo}
         </p>
         {loading ? (
           <div className="mt-1.5 h-6 w-28 rounded animate-pulse" style={{ backgroundColor: '#E2D9C8' }} />
         ) : (
-          <p className="mt-1 font-cinzel text-xl font-bold leading-none" style={{ color: '#1A1A1A' }}>
+          <p className="mt-1 font-cinzel font-bold leading-none" style={{ fontSize: 24, color: '#1A1A1A' }}>
             {valor}
           </p>
         )}
@@ -166,10 +178,10 @@ function AlertaRow({
   const faixa = getFaixaAlerta(diasRestantes)
 
   const borderCor = {
-    prescrito: '#FF4444',
-    critico:   '#FF6B35',
-    urgente:   '#FFB347',
-    atencao:   '#FFD700',
+    prescrito: '#5a0000',
+    critico:   '#7a3000',
+    urgente:   '#5a4a00',
+    atencao:   '#2d5a2d',
   }[faixa]
 
   return (
@@ -195,7 +207,7 @@ function AlertaRow({
           </p>
         </div>
         <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity"
-          style={{ color: '#B89C5C' }} />
+          style={{ color: '#B79A5A' }} />
       </div>
     </button>
   )
@@ -252,7 +264,7 @@ export default function Dashboard() {
       {/* ── Cabeçalho ───────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1E2A' }}>
+          <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1220' }}>
             Dashboard
           </h1>
           <p className="font-lato text-sm capitalize mt-0.5" style={{ color: '#9B9B9B' }}>
@@ -264,9 +276,9 @@ export default function Dashboard() {
           disabled={isLoading}
           className="flex items-center gap-2 px-4 py-2 rounded text-sm font-montserrat font-semibold
                      text-white transition-colors disabled:opacity-50"
-          style={{ backgroundColor: '#5A1E2A' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B89C5C' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1E2A' }}
+          style={{ backgroundColor: '#5A1220' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B79A5A' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#5A1220' }}
         >
           <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
           Atualizar
@@ -288,6 +300,21 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* VINDEX Header */}
+      <div style={{ marginBottom: 20 }}>
+        <div className="flex items-center justify-between" style={{ paddingBottom: 12, borderBottom: '1px solid rgba(183,154,90,0.15)' }}>
+          <div>
+            <p style={{ fontFamily: "'Cinzel', serif", fontSize: 13, color: '#B79A5A', letterSpacing: 3, lineHeight: 1.2 }}>VINDEX</p>
+            <p style={{ fontFamily: "'Lato', sans-serif", fontWeight: 300, fontSize: 10, color: '#555', marginTop: 2 }}>Legal Desk</p>
+          </div>
+          <div style={{ textAlign: 'right' }}>
+            <p style={{ fontFamily: "'Lato', sans-serif", fontSize: 13, color: '#8a9ab0' }}>
+              {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* ── Seção 1: KPI Cards ──────────────────────────────── */}
       <section>
         <h2 className="font-montserrat text-xs font-semibold uppercase tracking-widest mb-3"
@@ -300,7 +327,7 @@ export default function Dashboard() {
             valor={metricas.total_ativos.toString()}
             subtitulo="Em acompanhamento"
             icon={Briefcase}
-            iconBg="#5A1E2A"
+            iconBg="#5A1220"
             loading={loadingCasos}
           />
           <KpiCard
@@ -308,7 +335,7 @@ export default function Dashboard() {
             valor={formatarMoeda(metricas.valor_total_cobranca)}
             subtitulo="Valor atualizado total"
             icon={DollarSign}
-            iconBg="#0D1B2A"
+            iconBg="#0E1B2A"
             loading={loadingCasos}
           />
           <KpiCard
@@ -324,7 +351,7 @@ export default function Dashboard() {
             valor={`${metricas.taxa_sucesso_extrajudicial}% / ${metricas.taxa_sucesso_judicial}%`}
             subtitulo="Extrajudicial / Judicial"
             icon={Target}
-            iconBg="#B89C5C"
+            iconBg="#B79A5A"
             loading={loadingCasos}
           />
         </div>
@@ -344,14 +371,14 @@ export default function Dashboard() {
             style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}
           >
             <div className="flex items-center gap-2">
-              <AlertTriangle size={16} style={{ color: '#B89C5C' }} />
+              <AlertTriangle size={16} style={{ color: '#B79A5A' }} />
               <h2 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
                 Alertas de Prescrição
               </h2>
               {alertas.length > 0 && (
                 <span
                   className="ml-1 px-2 py-0.5 rounded-full text-[10px] font-bold font-montserrat"
-                  style={{ backgroundColor: '#5A1E2A', color: '#F5F5F5' }}
+                  style={{ backgroundColor: '#5A1220', color: '#F5F5F5' }}
                 >
                   {alertas.length}
                 </span>
@@ -419,7 +446,7 @@ export default function Dashboard() {
               <button
                 onClick={() => navigate('/cobranca/prazos')}
                 className="font-montserrat text-xs font-semibold transition-colors"
-                style={{ color: '#B89C5C' }}
+                style={{ color: '#B79A5A' }}
               >
                 Ver calendário de prazos →
               </button>
@@ -436,7 +463,7 @@ export default function Dashboard() {
             className="flex items-center gap-2 px-5 py-3.5"
             style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}
           >
-            <Scale size={16} style={{ color: '#B89C5C' }} />
+            <Scale size={16} style={{ color: '#B79A5A' }} />
             <h2 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
               Pipeline de Casos
             </h2>
@@ -446,7 +473,7 @@ export default function Dashboard() {
             {loadingCasos ? (
               <div className="h-52 flex items-center justify-center">
                 <div className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
-                  style={{ borderColor: '#E2D9C8', borderTopColor: '#5A1E2A' }} />
+                  style={{ borderColor: '#E2D9C8', borderTopColor: '#5A1220' }} />
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={210}>
@@ -517,7 +544,7 @@ export default function Dashboard() {
           style={{ borderBottom: '1px solid #E2D9C8', backgroundColor: '#FAFAF8' }}
         >
           <div className="flex items-center gap-2">
-            <Clock size={16} style={{ color: '#B89C5C' }} />
+            <Clock size={16} style={{ color: '#B79A5A' }} />
             <h2 className="font-montserrat text-sm font-semibold" style={{ color: '#1A1A1A' }}>
               Tarefas Urgentes
             </h2>
@@ -525,7 +552,7 @@ export default function Dashboard() {
           <button
             onClick={() => navigate('/cobranca/tarefas')}
             className="font-montserrat text-xs font-semibold transition-colors"
-            style={{ color: '#B89C5C' }}
+            style={{ color: '#B79A5A' }}
           >
             Ver todas →
           </button>
@@ -652,7 +679,7 @@ export default function Dashboard() {
         className="flex items-center gap-2 px-4 py-2.5 rounded text-xs font-lato"
         style={{ backgroundColor: '#F0EBE0', color: '#9B9B9B', border: '1px solid #E2D9C8' }}
       >
-        <Scale size={12} style={{ color: '#B89C5C', flexShrink: 0 }} />
+        <Scale size={12} style={{ color: '#B79A5A', flexShrink: 0 }} />
         <span>
           Alertas de prescrição calculados conforme Arts. 205 e 206, §5º, I do Código Civil.
           Reconhecimento da dívida pelo devedor (Art. 202, VI, CC) interrompe e reinicia o prazo.
