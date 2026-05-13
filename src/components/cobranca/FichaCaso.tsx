@@ -26,7 +26,7 @@ import { supabase } from '@/lib/supabase'
 import { formatarMoeda, formatarData } from '@/lib/utils'
 import type { StatusPrescricao, EtapaCaso } from '@/types/cobranca'
 
-// ── Constantes de exibição ────────────────────────────────────
+// ââ Constantes de exibição ââââââââââââââââââââââââââââââââââââ
 const ETAPA_LABEL: Record<EtapaCaso, string> = {
   DIAGNOSTICO:            'Diagnóstico',
   ESTRATEGIA:             'Estratégia',
@@ -56,7 +56,7 @@ const STATUS_TAREFA_LABEL: Record<string, string> = {
   BLOQUEADA:   'Bloqueada',
 }
 
-// ── Componentes de apoio ──────────────────────────────────────
+// ââ Componentes de apoio ââââââââââââââââââââââââââââââââââââââ
 function SectionCard({
   titulo, icon: Icon, children, defaultOpen = true,
 }: { titulo: string; icon: React.ElementType; children: React.ReactNode; defaultOpen?: boolean }) {
@@ -78,7 +78,7 @@ function SectionCard({
           {titulo}
         </span>
         <span className="font-lato text-xs" style={{ color: '#9B9B9B' }}>
-          {open ? '▲' : '▼'}
+          {open ? 'â²' : 'â¼'}
         </span>
       </button>
       {open && (
@@ -192,7 +192,7 @@ function CampoPesquisa({
   )
 }
 
-// ── FichaCaso principal ───────────────────────────────────────
+// ââ FichaCaso principal âââââââââââââââââââââââââââââââââââââââ
 type AbaFicha = 'resumo' | 'timeline' | 'pagamentos' | 'protesto' | 'lgpd' | 'documentos'
 
 export default function FichaCaso() {
@@ -220,7 +220,7 @@ export default function FichaCaso() {
       .then(({ count }) => setProtestosPendentes(count ?? 0))
   }, [id])
 
-  // ── Loading / Erro ────────────────────────────────────────
+  // ââ Loading / Erro ââââââââââââââââââââââââââââââââââââââââ
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-3">
@@ -239,7 +239,7 @@ export default function FichaCaso() {
         </p>
         <button onClick={() => navigate('/cobranca/casos')}
           className="font-montserrat text-sm font-semibold" style={{ color: '#B79A5A' }}>
-          ← Voltar à lista
+          â Voltar Ã  lista
         </button>
       </div>
     )
@@ -293,7 +293,7 @@ export default function FichaCaso() {
       {/* Layout 2 colunas */}
       <div className="flex flex-col xl:flex-row gap-5">
 
-        {/* ── COLUNA ESQUERDA (40%) ──────────────────────────── */}
+        {/* ââ COLUNA ESQUERDA (40%) ââââââââââââââââââââââââââââ */}
         <div className="xl:w-[40%] space-y-4">
 
           {/* Hero card */}
@@ -341,7 +341,7 @@ export default function FichaCaso() {
                 {protestosPendentes > 0 && (
                   <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold"
                     style={{ backgroundColor: '#FFFBEB', color: '#92400E', border: '1px solid #FCD34D' }}>
-                    🔔 {protestosPendentes} protesto(s) pendente(s)
+                    ð {protestosPendentes} protesto(s) pendente(s)
                   </span>
                 )}
               </div>
@@ -473,8 +473,8 @@ export default function FichaCaso() {
               } />
               <InfoRow label="Data Origem / Venc."
                 value={`${formatarData(titulo.data_origem)} / ${formatarData(titulo.data_vencimento)}`} />
-              <InfoRow label="Índice / Juros / Multa"
-                value={`${titulo.indice_correcao} · ${titulo.juros_mensais}%/mês · ${titulo.multa_percentual}% multa`} />
+              <InfoRow label="Ãndice / Juros / Multa"
+                value={`${titulo.indice_correcao} Â· ${titulo.juros_mensais}%/mês Â· ${titulo.multa_percentual}% multa`} />
               {titulo.observacoes_prova && (
                 <InfoRow label="Observações" value={titulo.observacoes_prova} />
               )}
@@ -489,7 +489,7 @@ export default function FichaCaso() {
               <InfoRow label="Advogado Resp."
                 value={caso.advogado ? `${caso.advogado.nome}${caso.advogado.oab ? ` — OAB ${caso.advogado.oab}` : ''}` : '—'} />
               {caso.numero_processo && (
-                <InfoRow label="Nº Processo" value={
+                <InfoRow label="NÂº Processo" value={
                   caso.link_tribunal
                     ? <a href={caso.link_tribunal} target="_blank" rel="noreferrer"
                         className="flex items-center gap-1" style={{ color: '#B79A5A' }}>
@@ -533,7 +533,7 @@ export default function FichaCaso() {
           </SectionCard>
         </div>
 
-        {/* ── COLUNA DIREITA (60%) ───────────────────────────── */}
+        {/* ââ COLUNA DIREITA (60%) âââââââââââââââââââââââââââââ */}
         <div className="xl:flex-1 space-y-0">
 
           {/* Tab bar */}
@@ -641,7 +641,7 @@ export default function FichaCaso() {
                           {doc.nome_arquivo}
                         </p>
                         <p className="font-lato text-[10px]" style={{ color: '#9B9B9B' }}>
-                          {doc.tipo_documento} · {format(parseISO(doc.data_upload), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                          {doc.tipo_documento} Â· {format(parseISO(doc.data_upload), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                         </p>
                       </div>
                       <a href={doc.url_storage} target="_blank" rel="noreferrer"
@@ -725,7 +725,7 @@ export default function FichaCaso() {
                               className="mt-2 w-full py-1 rounded text-[9px] font-montserrat font-semibold
                                          transition-colors border"
                               style={{ borderColor: cfg.header, color: cfg.header }}>
-                              {grupo === 'A_FAZER' ? '▶ Iniciar' : '✓ Concluir'}
+                              {grupo === 'A_FAZER' ? 'â¶ Iniciar' : 'â Concluir'}
                             </button>
                           )}
                         </div>
