@@ -79,13 +79,13 @@ export function gerarHeaderPDF(
     doc.setLineWidth(0.4)
     doc.line(0, 28, pageWidth, 28)
 
-    // Ícone V (triângulo invertido duplo)
+    // Ãcone V (triângulo invertido duplo)
     const ix = 10, iy = 8
     doc.setDrawColor(90, 18, 32)
     doc.setLineWidth(0.8)
     // V externo
-    doc.line(ix, iy, ix + 7, iy + 11)      // esq → vértice
-    doc.line(ix + 14, iy, ix + 7, iy + 11) // dir → vértice
+    doc.line(ix, iy, ix + 7, iy + 11)      // esq â vértice
+    doc.line(ix + 14, iy, ix + 7, iy + 11) // dir â vértice
     // V interno
     doc.setLineWidth(0.5)
     doc.line(ix + 2, iy, ix + 7, iy + 9)
@@ -144,7 +144,7 @@ export function gerarRodapePDF(doc: jsPDF, paginaAtual: number, totalPaginas: nu
   doc.text(`Página ${paginaAtual} de ${totalPaginas}`, pageWidth - 10, y + 4, { align: 'right' })
 }
 
-// ── Exportação principal ──────────────────────────────────────
+// ââ Exportação principal ââââââââââââââââââââââââââââââââââââââ
 export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const { titulo } = caso
@@ -177,7 +177,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   )
   y += 10
 
-  // ── Qualificação das Partes ────────────────────────────────
+  // ââ Qualificação das Partes ââââââââââââââââââââââââââââââââ
   y = secao(doc, '1. Qualificação das Partes', y)
 
   // Notificante (credor)
@@ -212,7 +212,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
 
   y += 5
 
-  // ── Do Débito ─────────────────────────────────────────────
+  // ââ Do Débito âââââââââââââââââââââââââââââââââââââââââââââ
   y = secao(doc, '2. Do Débito', y)
 
   const meses = Math.max(0, differenceInMonths(hoje, parseISO(titulo.data_origem)))
@@ -225,7 +225,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
     ['Valor original da dívida',               formatarMoeda(titulo.valor_original)],
     [`Tipo do título`,                          titulo.tipo_titulo.replace(/_/g, ' ')],
     [`Data de origem / vencimento`,             `${format(parseISO(titulo.data_origem), 'dd/MM/yyyy')} / ${format(parseISO(titulo.data_vencimento), 'dd/MM/yyyy')}`],
-    [`Juros moratórios (${titulo.juros_mensais}%/mês × ${meses} meses)`, formatarMoeda(comJuros - titulo.valor_original)],
+    [`Juros moratórios (${titulo.juros_mensais}%/mês Ã ${meses} meses)`, formatarMoeda(comJuros - titulo.valor_original)],
     [`Multa contratual (${titulo.multa_percentual}%)`, formatarMoeda(multa)],
     [`Correção monetária (${titulo.indice_correcao})`, 'A apurar na data do pagamento'],
   ]
@@ -252,7 +252,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   doc.text(formatarMoeda(total), 188, y + 6, { align: 'right' })
   y += 16
 
-  // ── Do Prazo ─────────────────────────────────────────────
+  // ââ Do Prazo âââââââââââââââââââââââââââââââââââââââââââââ
   y = secao(doc, '3. Do Prazo para Pagamento', y)
 
   doc.setFont('helvetica', 'normal')
@@ -269,7 +269,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   doc.text(corpoPrazo as string[], 20, y)
   y += (corpoPrazo.length as number) * 5 + 6
 
-  // ── Fundamento Legal ──────────────────────────────────────
+  // ââ Fundamento Legal ââââââââââââââââââââââââââââââââââââââ
   y = secao(doc, '4. Do Fundamento Legal', y)
 
   doc.setFont('helvetica', 'normal')
@@ -282,7 +282,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
     `acrescidos de juros moratórios, multa e correção monetária. ` +
     `O prazo prescricional aplicável é de ${titulo.prazo_prescricional_anos} anos, nos termos do ` +
     (titulo.prazo_prescricional_anos === 5
-      ? 'art. 206, §5º, I do Código Civil'
+      ? 'art. 206, Â§5Âº, I do Código Civil'
       : 'art. 205 do Código Civil (regra geral)') +
     `, com data limite para ajuizamento em ${format(parseISO(titulo.data_limite_ajuizamento), 'dd/MM/yyyy')}.`,
     170,
@@ -304,7 +304,7 @@ export function gerarNotificacaoExtrajudicial(caso: CasoCompleto): ArrayBuffer {
   doc.text('incluindo ação judicial, protesto e inscrição em cadastros de inadimplentes.', 105, y + 9.5, { align: 'center' })
   y += 18
 
-  // ── Rodapé / Assinatura ────────────────────────────────────
+  // ââ Rodapé / Assinatura ââââââââââââââââââââââââââââââââââââ
   if (y > 230) {
     doc.addPage()
     y = 20
