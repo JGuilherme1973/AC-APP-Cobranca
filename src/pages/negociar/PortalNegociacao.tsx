@@ -16,7 +16,7 @@ import { gerarConfissaoDivida, downloadConfissao } from '@/lib/regua/confissaoDi
 import VindexLogo from '@/components/brand/VindexLogo'
 import VindexIcon from '@/components/brand/VindexIcon'
 
-// ── Tipos ──────────────────────────────────────────────────────
+// ââ Tipos ââââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 interface DadosCaso {
   id:               string
@@ -36,7 +36,7 @@ interface DadosCaso {
 
 type Etapa = 'carregando' | 'exibindo' | 'confirmando' | 'concluido' | 'erro' | 'expirado' | 'usado'
 
-// ── Helpers ────────────────────────────────────────────────────
+// ââ Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 
 const COR_NAVY   = '#0E1B2A'
 const COR_NAVY_2 = '#0a1420'
@@ -52,18 +52,18 @@ function calcularDesconto(valor: number, pct: number): number {
   return Math.round(valor * pct) / 100
 }
 
-// ── Tela: Carregando ───────────────────────────────────────────
+// ââ Tela: Carregando âââââââââââââââââââââââââââââââââââââââââââ
 
 function TelaCarregando() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen gap-4" style={{ backgroundColor: COR_NAVY_3 }}>
       <Loader2 size={40} className="animate-spin" style={{ color: COR_OURO }} />
-      <p className="text-sm" style={{ color: '#9ca3af' }}>Verificando seu link…</p>
+      <p className="text-sm" style={{ color: '#9ca3af' }}>Verificando seu linkâ¦</p>
     </div>
   )
 }
 
-// ── Tela: Erro/Expirado/Usado ──────────────────────────────────
+// ââ Tela: Erro/Expirado/Usado ââââââââââââââââââââââââââââââââââ
 
 function TelaErro({ tipo, mensagem }: { tipo: 'erro' | 'expirado' | 'usado'; mensagem: string }) {
   const icone = tipo === 'usado'
@@ -121,7 +121,7 @@ function TelaErro({ tipo, mensagem }: { tipo: 'erro' | 'expirado' | 'usado'; men
   )
 }
 
-// ── Tela: Concluído ────────────────────────────────────────────
+// ââ Tela: Concluído ââââââââââââââââââââââââââââââââââââââââââââ
 
 function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: string; pdf: ArrayBuffer | null }) {
   return (
@@ -158,9 +158,9 @@ function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: s
       >
         <p className="text-xs font-medium mb-2" style={{ color: COR_OURO }}>Próximos Passos</p>
         <ul className="space-y-1.5 text-xs" style={{ color: '#9ca3af' }}>
-          <li>• Em até 24h você receberá os boletos/link Pix por e-mail</li>
-          <li>• Guarde o PDF da confissão de dívida como comprovante</li>
-          <li>• Em caso de dúvidas: {dados.advogado_email}</li>
+          <li>â¢ Em até 24h você receberá os boletos/link Pix por e-mail</li>
+          <li>â¢ Guarde o PDF da confissão de dívida como comprovante</li>
+          <li>â¢ Em caso de dúvidas: {dados.advogado_email}</li>
         </ul>
       </div>
 
@@ -192,7 +192,7 @@ function TelaConcluido({ dados, acordoId, pdf }: { dados: DadosCaso; acordoId: s
   )
 }
 
-// ── Componente principal ───────────────────────────────────────
+// ââ Componente principal âââââââââââââââââââââââââââââââââââââââ
 
 export default function PortalNegociacao() {
   const { token } = useParams<{ token: string }>()
@@ -210,7 +210,7 @@ export default function PortalNegociacao() {
   const [pixAuto,      setPixAuto]      = useState(false)
   const [descontoPct,  setDescontoPct]  = useState(10)
 
-  // ── Carregar dados do token ──────────────────────────────────
+  // ââ Carregar dados do token ââââââââââââââââââââââââââââââââââ
 
   const carregarToken = useCallback(async () => {
     if (!token) { setEtapa('erro'); setErrMsg('Token ausente na URL.'); return }
@@ -240,7 +240,7 @@ export default function PortalNegociacao() {
 
   useEffect(() => { carregarToken() }, [carregarToken])
 
-  // ── Confirmar acordo ─────────────────────────────────────────
+  // ââ Confirmar acordo âââââââââââââââââââââââââââââââââââââââââ
 
   const confirmarAcordo = async () => {
     if (!dados || !token) return
@@ -301,7 +301,7 @@ export default function PortalNegociacao() {
     }
   }
 
-  // ── Renders condicionais ─────────────────────────────────────
+  // ââ Renders condicionais âââââââââââââââââââââââââââââââââââââ
 
   if (etapa === 'carregando') return <TelaCarregando />
   if (etapa === 'erro')      return <TelaErro tipo="erro"     mensagem={errMsg} />
@@ -310,7 +310,7 @@ export default function PortalNegociacao() {
   if (etapa === 'concluido' && dados) return <TelaConcluido dados={dados} acordoId={acordoId} pdf={pdf} />
   if (!dados) return <TelaCarregando />
 
-  // ── Cálculos ──────────────────────────────────────────────────
+  // ââ Cálculos ââââââââââââââââââââââââââââââââââââââââââââââââââ
 
   const valorDesconto = calcularDesconto(dados.valor_atualizado, descontoPct)
   const valorAcordo   = dados.valor_atualizado - valorDesconto
@@ -318,7 +318,7 @@ export default function PortalNegociacao() {
   const primeiroVenc  = format(addDays(new Date(), 3), "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
   const dataAtualizada = format(new Date(), "dd/MM/yyyy", { locale: ptBR })
 
-  // ── Render principal ──────────────────────────────────────────
+  // ââ Render principal ââââââââââââââââââââââââââââââââââââââââââ
 
   return (
     <div className="min-h-screen pb-10" style={{ backgroundColor: COR_NAVY_3 }}>
@@ -478,7 +478,7 @@ export default function PortalNegociacao() {
             </div>
           </div>
 
-          {/* Tipo À vista / Parcelado */}
+          {/* Tipo Ã vista / Parcelado */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
             {(['avista', 'parcelado'] as const).map(tipo => (
               <button
@@ -497,7 +497,7 @@ export default function PortalNegociacao() {
                   transition: 'all 0.15s',
                 }}
               >
-                {tipo === 'avista' ? 'À Vista' : 'Parcelado'}
+                {tipo === 'avista' ? 'Ã Vista' : 'Parcelado'}
               </button>
             ))}
           </div>
@@ -552,7 +552,7 @@ export default function PortalNegociacao() {
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#22c55e' }}>Desconto ({descontoPct}%)</span>
-              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#22c55e' }}>− {fmt(valorDesconto)}</span>
+              <span style={{ fontFamily: 'Lato, sans-serif', fontSize: 12, color: '#22c55e' }}>â {fmt(valorDesconto)}</span>
             </div>
             <div style={{
               borderTop: '1px solid rgba(255,255,255,0.08)',
@@ -561,7 +561,7 @@ export default function PortalNegociacao() {
               justifyContent: 'space-between',
             }}>
               <span style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: COR_OURO }}>
-                {tipoAcordo === 'avista' ? 'Total à vista' : `${numParcelas}x de`}
+                {tipoAcordo === 'avista' ? 'Total Ã  vista' : `${numParcelas}x de`}
               </span>
               <span style={{ fontFamily: 'Cinzel, serif', fontWeight: 700, fontSize: 13, color: COR_OURO }}>
                 {fmt(valorParcela)}
@@ -619,7 +619,7 @@ export default function PortalNegociacao() {
             <Shield size={12} style={{ marginTop: 2, flexShrink: 0 }} />
             <span>
               Ao confirmar, você consente com o tratamento dos seus dados para fins de cobrança,
-              nos termos do Art. 7º, V da <strong>LGPD (Lei 13.709/2018)</strong>.
+              nos termos do Art. 7Âº, V da <strong>LGPD (Lei 13.709/2018)</strong>.
               Seus dados são protegidos e utilizados exclusivamente por ANDRADE & CINTRA Advogados.
             </span>
           </div>
@@ -637,7 +637,7 @@ export default function PortalNegociacao() {
                 Confirme seu acordo:<br />
                 <strong style={{ color: COR_OURO }}>
                   {tipoAcordo === 'avista'
-                    ? `${fmt(valorAcordo)} à vista`
+                    ? `${fmt(valorAcordo)} Ã  vista`
                     : `${numParcelas}x de ${fmt(valorParcela)}`}
                 </strong>
               </p>
@@ -681,13 +681,13 @@ export default function PortalNegociacao() {
                   }}
                 >
                   {loading ? <Loader2 size={16} className="animate-spin" /> : <FileText size={16} />}
-                  {loading ? 'Registrando…' : 'Confirmar Acordo'}
+                  {loading ? 'Registrandoâ¦' : 'Confirmar Acordo'}
                 </button>
               </div>
             </div>
           ) : (
             <>
-              {/* Botão 1 — Pagar à vista */}
+              {/* Botão 1 — Pagar Ã  vista */}
               <button
                 onClick={() => { setTipoAcordo('avista'); setEtapa('confirmando') }}
                 style={{
@@ -706,7 +706,7 @@ export default function PortalNegociacao() {
                   textTransform: 'uppercase',
                 }}
               >
-                PAGAR À VISTA COM PIX
+                PAGAR Ã VISTA COM PIX
                 {descontoPct > 0 && (
                   <div style={{
                     fontFamily: 'Lato, sans-serif',
@@ -775,7 +775,7 @@ export default function PortalNegociacao() {
           fontFamily: 'Lato, sans-serif',
           color: '#374151',
         }}>
-          ANDRADE & CINTRA Advogados · VINDEX · jgac@cintraadvogados.com.br
+          ANDRADE & CINTRA Advogados Â· VINDEX Â· jgac@cintraadvogados.com.br
         </p>
       </div>
     </div>
