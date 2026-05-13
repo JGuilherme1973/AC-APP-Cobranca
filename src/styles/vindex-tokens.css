@@ -4,6 +4,19 @@
    ============================================================ */
 
 :root {
+  /* VINDEX — Paleta Oficial */
+  --vindex-vinho:   #5A1220;
+  --vindex-ouro:    #B79A5A;
+  --vindex-navy:    #0E1B2A;
+  --vindex-marfim:  #F6F2EC;
+  --vindex-prata:   #C7CBD1;
+
+  /* A&C Advogados — Paleta de Endosso */
+  --ac-vinho:       #5A1E2A;
+  --ac-ouro:        #B89C5C;
+  --ac-navy:        #0D1B2A;
+
+  /* Alias legados (compatibilidade com componentes existentes) */
   --vx-vinho:   #5A1220;
   --vx-ouro:    #B79A5A;
   --vx-navy:    #0E1B2A;
@@ -12,7 +25,10 @@
   --vx-navy-2:  #0a1420;
   --vx-navy-3:  #06101a;
   --vx-ouro-op: rgba(183, 154, 90, 0.15);
+
+  /* Tipografia */
   --vx-fonte-titulo: 'Cinzel', 'Trajan Pro', Georgia, serif;
   --vx-fonte-label:  'Montserrat', sans-serif;
   --vx-fonte-corpo:  'Lato', sans-serif;
 }
+
