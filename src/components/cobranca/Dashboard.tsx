@@ -3,7 +3,7 @@
  *
  * Seções:
  *   1. KPI Cards — métricas de casos e valores
- *   2. Alertas de Prescrição — 30 / 60 / 90 dias (vermelho → laranja → amarelo)
+ *   2. Alertas de Prescrição — 30 / 60 / 90 dias (vermelho â laranja â amarelo)
  *   3. Pipeline — gráfico de barras com distribuição por etapa
  *   4. Tarefas urgentes — vencidas e para hoje
  */
@@ -42,7 +42,7 @@ import { usePrazos } from '@/hooks/cobranca/usePrazos'
 import { formatarMoeda } from '@/lib/utils'
 import type { EtapaCaso, PrioridadeTarefa } from '@/types/cobranca'
 
-// ── Mapa de etapas ────────────────────────────────────────────
+// ââ Mapa de etapas ââââââââââââââââââââââââââââââââââââââââââââ
 const ETAPA_LABEL: Record<EtapaCaso, string> = {
   DIAGNOSTICO:             'Diagnóstico',
   ESTRATEGIA:              'Estratégia',
@@ -59,7 +59,7 @@ const ETAPA_COR: Record<EtapaCaso, string> = {
   EXECUCAO_RECUPERACAO:    '#5A1220',
 }
 
-// ── Tooltip customizado do gráfico ───────────────────────────
+// ââ Tooltip customizado do gráfico âââââââââââââââââââââââââââ
 interface TooltipPayload {
   name: string
   value: number
@@ -80,7 +80,7 @@ function PipelineTooltip({ active, payload }: { active?: boolean; payload?: Tool
   )
 }
 
-// ── Componente: KPI Card ──────────────────────────────────────
+// ââ Componente: KPI Card ââââââââââââââââââââââââââââââââââââââ
 interface KpiCardProps {
   titulo: string
   valor: string
@@ -134,7 +134,7 @@ function KpiCard({ titulo, valor, subtitulo, icon: Icon, iconBg, tendencia, load
             className="mt-1 font-montserrat text-xs font-medium"
             style={{ color: tendencia.positiva ? '#2D6A4F' : '#991B1B' }}
           >
-            {tendencia.positiva ? '▲' : '▼'} {tendencia.texto}
+            {tendencia.positiva ? 'â²' : 'â¼'} {tendencia.texto}
           </p>
         )}
       </div>
@@ -142,7 +142,7 @@ function KpiCard({ titulo, valor, subtitulo, icon: Icon, iconBg, tendencia, load
   )
 }
 
-// ── Componente: Badge de prazo ────────────────────────────────
+// ââ Componente: Badge de prazo ââââââââââââââââââââââââââââââââ
 function BadgeDias({ dias }: { dias: number }) {
   const faixa = getFaixaAlerta(dias)
   const cfg = {
@@ -163,7 +163,7 @@ function BadgeDias({ dias }: { dias: number }) {
   )
 }
 
-// ── Componente: Linha de alerta de prescrição ─────────────────
+// ââ Componente: Linha de alerta de prescrição âââââââââââââââââ
 function AlertaRow({
   devedor, credor, valor, diasRestantes, dataLimite, casoId,
 }: {
@@ -196,7 +196,7 @@ function AlertaRow({
           {devedor}
         </p>
         <p className="font-lato text-xs truncate mt-0.5" style={{ color: '#6B6B6B' }}>
-          Credor: {credor} · {formatarMoeda(valor)}
+          Credor: {credor} Â· {formatarMoeda(valor)}
         </p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">
@@ -213,7 +213,7 @@ function AlertaRow({
   )
 }
 
-// ── Componente: Badge de prioridade de tarefa ─────────────────
+// ââ Componente: Badge de prioridade de tarefa âââââââââââââââââ
 function PrioridadeBadge({ prioridade }: { prioridade: PrioridadeTarefa }) {
   const cfg = {
     ALTA:  { bg: '#FEE2E2', text: '#991B1B', label: 'Alta' },
@@ -230,7 +230,7 @@ function PrioridadeBadge({ prioridade }: { prioridade: PrioridadeTarefa }) {
   )
 }
 
-// ── Componente principal: Dashboard ──────────────────────────
+// ââ Componente principal: Dashboard ââââââââââââââââââââââââââ
 export default function Dashboard() {
   const navigate = useNavigate()
   const { metricas, loading: loadingCasos, error: errCasos, refetch: refetchCasos } = useCasos()
@@ -261,7 +261,7 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
 
-      {/* ── Cabeçalho ───────────────────────────────────────── */}
+      {/* ââ Cabeçalho âââââââââââââââââââââââââââââââââââââââââ */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="font-cinzel text-2xl font-bold" style={{ color: '#5A1220' }}>
@@ -315,7 +315,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* ── Seção 1: KPI Cards ──────────────────────────────── */}
+      {/* ââ Seção 1: KPI Cards ââââââââââââââââââââââââââââââââ */}
       <section>
         <h2 className="font-montserrat text-xs font-semibold uppercase tracking-widest mb-3"
           style={{ color: '#9B9B9B' }}>
@@ -357,7 +357,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* ── Seção 2 + 3: Alertas e Pipeline ─────────────────── */}
+      {/* ââ Seção 2 + 3: Alertas e Pipeline âââââââââââââââââââ */}
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
 
         {/* Alertas de Prescrição — 3/5 da largura */}
@@ -448,7 +448,7 @@ export default function Dashboard() {
                 className="font-montserrat text-xs font-semibold transition-colors"
                 style={{ color: '#B79A5A' }}
               >
-                Ver calendário de prazos →
+                Ver calendário de prazos â
               </button>
             </div>
           )}
@@ -534,7 +534,7 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* ── Seção 4: Tarefas urgentes ───────────────────────── */}
+      {/* ââ Seção 4: Tarefas urgentes âââââââââââââââââââââââââ */}
       <section
         className="bg-white rounded border shadow-sm overflow-hidden"
         style={{ borderColor: '#E2D9C8' }}
@@ -554,7 +554,7 @@ export default function Dashboard() {
             className="font-montserrat text-xs font-semibold transition-colors"
             style={{ color: '#B79A5A' }}
           >
-            Ver todas →
+            Ver todas â
           </button>
         </div>
 
@@ -674,14 +674,14 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* ── Rodapé informativo ──────────────────────────────── */}
+      {/* ââ Rodapé informativo ââââââââââââââââââââââââââââââââ */}
       <div
         className="flex items-center gap-2 px-4 py-2.5 rounded text-xs font-lato"
         style={{ backgroundColor: '#F0EBE0', color: '#9B9B9B', border: '1px solid #E2D9C8' }}
       >
         <Scale size={12} style={{ color: '#B79A5A', flexShrink: 0 }} />
         <span>
-          Alertas de prescrição calculados conforme Arts. 205 e 206, §5º, I do Código Civil.
+          Alertas de prescrição calculados conforme Arts. 205 e 206, Â§5Âº, I do Código Civil.
           Reconhecimento da dívida pelo devedor (Art. 202, VI, CC) interrompe e reinicia o prazo.
         </span>
       </div>
