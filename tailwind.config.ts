@@ -22,14 +22,25 @@ const config: Config = {
         lato: ['Lato', 'sans-serif'],
       },
       colors: {
-        'ac-vinho':  '#5A1E2A',
-        'ac-ouro':   '#B89C5C',
-        'ac-navy':   '#0D1B2A',
+        /* VINDEX — Paleta Oficial */
+        'vindex-vinho':   '#5A1220',
+        'vindex-ouro':    '#B79A5A',
+        'vindex-navy':    '#0E1B2A',
+        'vindex-marfim':  '#F6F2EC',
+        'vindex-prata':   '#C7CBD1',
+
+        /* A&C Advogados — Paleta de Endosso */
+        'ac-vinho':       '#5A1E2A',
+        'ac-ouro':        '#B89C5C',
+        'ac-navy':        '#0D1B2A',
+
+        /* Auxiliares */
         'ac-cinza':  '#C0C0C0',
         'ac-branco': '#F5F5F5',
         'ac-fundo':  '#FAFAF8',
         'ac-texto':  '#1A1A1A',
         'ac-borda':  '#E2D9C8',
+
         border:      'hsl(var(--border))',
         input:       'hsl(var(--input))',
         ring:        'hsl(var(--ring))',
@@ -85,3 +96,4 @@ const config: Config = {
 }
 
 export default config
+
