@@ -22,18 +22,18 @@ import {
 import { configurarMFA, verificarMFA } from '@/lib/seguranca/mfa'
 import type { MFASetup } from '@/lib/seguranca/mfa'
 
-// ─── Paleta VINDEX ────────────────────────────────────────────
+// âââ Paleta VINDEX ââââââââââââââââââââââââââââââââââââââââââââ
 const COR_NAVY = '#0E1B2A'
 const COR_OURO = '#B79A5A'
 const COR_VINHO = '#5A1220'
 
-// ─── Props ────────────────────────────────────────────────────
+// âââ Props ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 interface Props {
   usuario_id: string
   onConcluido: () => void
 }
 
-// ─── Barra de progresso das etapas ───────────────────────────
+// âââ Barra de progresso das etapas âââââââââââââââââââââââââââ
 function BarraEtapas({ etapa }: { etapa: 1 | 2 | 3 }) {
   const etapas = ['Início', 'QR Code', 'Verificar'] as const
   return (
@@ -75,7 +75,7 @@ function BarraEtapas({ etapa }: { etapa: 1 | 2 | 3 }) {
   )
 }
 
-// ─── Componente principal ─────────────────────────────────────
+// âââ Componente principal âââââââââââââââââââââââââââââââââââââ
 export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
   const [etapa, setEtapa] = useState<1 | 2 | 3>(1)
   const [mfaSetup, setMfaSetup] = useState<MFASetup | null>(null)
@@ -88,7 +88,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
   const [verificacaoOk, setVerificacaoOk] = useState(false)
   const [tentativasRestantes, setTentativasRestantes] = useState<number | null>(null)
 
-  // ── Etapa 1: iniciar configuração ────────────────────────
+  // ââ Etapa 1: iniciar configuração ââââââââââââââââââââââââ
   const handleIniciar = useCallback(async () => {
     setLoading(true)
     setErro('')
@@ -103,7 +103,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
     }
   }, [usuario_id])
 
-  // ── Copiar segredo ───────────────────────────────────────
+  // ââ Copiar segredo âââââââââââââââââââââââââââââââââââââââ
   const handleCopiarSecret = useCallback(async () => {
     if (!mfaSetup?.secret) return
     try {
@@ -115,7 +115,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
     }
   }, [mfaSetup])
 
-  // ── Copiar todos os códigos de backup ────────────────────
+  // ââ Copiar todos os códigos de backup ââââââââââââââââââââ
   const handleCopiarCodigos = useCallback(async () => {
     if (!mfaSetup?.backup_codes) return
     try {
@@ -127,7 +127,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
     }
   }, [mfaSetup])
 
-  // ── Etapa 3: verificar código ────────────────────────────
+  // ââ Etapa 3: verificar código ââââââââââââââââââââââââââââ
   const handleVerificar = useCallback(async () => {
     if (codigo.length !== 6) return
     setLoading(true)
@@ -152,7 +152,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
     }
   }, [codigo, usuario_id, onConcluido])
 
-  // ─────────────────────────────────────────────────────────
+  // âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
   return (
     <div
       className="min-h-screen flex flex-col items-center justify-center px-4 py-10"
@@ -181,7 +181,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
       >
         <BarraEtapas etapa={etapa} />
 
-        {/* ── ETAPA 1: Apresentação ── */}
+        {/* ââ ETAPA 1: Apresentação ââ */}
         {etapa === 1 && (
           <div className="space-y-6">
             <div className="text-center">
@@ -244,7 +244,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
           </div>
         )}
 
-        {/* ── ETAPA 2: QR Code + Backup Codes ── */}
+        {/* ââ ETAPA 2: QR Code + Backup Codes ââ */}
         {etapa === 2 && mfaSetup && (
           <div className="space-y-6">
             <h2 className="font-cinzel text-lg font-bold text-center text-white">
@@ -362,12 +362,12 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
               onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = COR_OURO }}
               onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = COR_VINHO }}
             >
-              Já salvei os códigos →
+              Já salvei os códigos â
             </button>
           </div>
         )}
 
-        {/* ── ETAPA 3: Verificar código ── */}
+        {/* ââ ETAPA 3: Verificar código ââ */}
         {etapa === 3 && (
           <div className="space-y-6">
             <div className="text-center">
@@ -471,7 +471,7 @@ export default function ConfigurarMFA({ usuario_id, onConcluido }: Props) {
                   className="w-full py-2 text-sm font-montserrat transition-opacity hover:opacity-70"
                   style={{ color: 'rgba(255,255,255,0.4)' }}
                 >
-                  ← Voltar ao QR Code
+                  â Voltar ao QR Code
                 </button>
               </>
             )}
