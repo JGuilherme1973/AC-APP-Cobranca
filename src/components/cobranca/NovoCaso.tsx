@@ -2,10 +2,10 @@
  * NovoCaso.tsx — Formulário multi-step de abertura de caso.
  *
  * Steps:
- *   1. Credor   → StepCreedor
- *   2. Devedor  → StepDevedor
- *   3. Título   → StepTitulo (prescrição + valor + upload)
- *   4. Estratégia → StepEstrategia (via processual + advogado + salvar)
+ *   1. Credor   â StepCreedor
+ *   2. Devedor  â StepDevedor
+ *   3. Título   â StepTitulo (prescrição + valor + upload)
+ *   4. Estratégia â StepEstrategia (via processual + advogado + salvar)
  *
  * Ao salvar, redireciona para /cobranca/casos/:id
  */
@@ -25,7 +25,7 @@ import {
   type EstrategiaFormData,
 } from '@/hooks/cobranca/useCriarCaso'
 
-// ── Configuração dos steps ────────────────────────────────────
+// ââ Configuração dos steps ââââââââââââââââââââââââââââââââââââ
 const STEPS = [
   { label: 'Credor',     desc: 'Dados do cliente',       icon: User       },
   { label: 'Devedor',    desc: 'Dados do devedor',        icon: UserX      },
@@ -33,7 +33,7 @@ const STEPS = [
   { label: 'Estratégia', desc: 'Via processual',          icon: Scale      },
 ] as const
 
-// ── Barra de progresso ────────────────────────────────────────
+// ââ Barra de progresso ââââââââââââââââââââââââââââââââââââââââ
 function ProgressBar({ currentStep }: { currentStep: number }) {
   return (
     <div className="mb-8">
@@ -124,7 +124,7 @@ function ProgressBar({ currentStep }: { currentStep: number }) {
   )
 }
 
-// ── Componente principal ──────────────────────────────────────
+// ââ Componente principal ââââââââââââââââââââââââââââââââââââââ
 interface WizardData {
   credor?:   CredorFormData
   devedor?:  DevedorFormData
