@@ -17,7 +17,7 @@ import { useListaCasos } from '@/hooks/cobranca/useListaCasos'
 import type { CasoLista } from '@/hooks/cobranca/useListaCasos'
 import { formatarMoeda } from '@/lib/utils'
 
-// ── Constantes ────────────────────────────────────────────────
+// ââ Constantes ââââââââââââââââââââââââââââââââââââââââââââââââ
 const POR_PAGINA = 20
 
 const ETAPA_LABEL: Record<string, string> = {
@@ -66,7 +66,7 @@ const TIPO_EVENTO_LABEL: Record<string, string> = {
   OUTRO:               'Outro',
 }
 
-// ── Helpers ───────────────────────────────────────────────────
+// ââ Helpers âââââââââââââââââââââââââââââââââââââââââââââââââââ
 function diasRestantes(dataLimite: string): number {
   if (!dataLimite) return 9999
   return differenceInDays(parseISO(dataLimite), new Date())
@@ -100,7 +100,7 @@ function exportarCSV(casos: CasoLista[]) {
   const csv = [cabecalho, ...linhas]
     .map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(','))
     .join('\n')
-  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' })
+  const blob = new Blob(['ï»¿' + csv], { type: 'text/csv;charset=utf-8;' })
   const url  = URL.createObjectURL(blob)
   const link = document.createElement('a')
   link.href     = url
@@ -109,7 +109,7 @@ function exportarCSV(casos: CasoLista[]) {
   URL.revokeObjectURL(url)
 }
 
-// ── Sub-componentes ───────────────────────────────────────────
+// ââ Sub-componentes âââââââââââââââââââââââââââââââââââââââââââ
 
 function SkeletonRow() {
   return (
@@ -172,7 +172,7 @@ function BadgeTipo({ tipo }: { tipo: string }) {
   )
 }
 
-// Ícone de ordenação na coluna
+// Ãcone de ordenação na coluna
 function SortIcon({ ativo, dir }: { ativo: boolean; dir: 'asc' | 'desc' }) {
   if (!ativo) return <ChevronsUpDown size={12} style={{ color: '#C0C0C0' }} />
   if (dir === 'asc') return <ChevronUp size={12} style={{ color: '#B79A5A' }} />
@@ -198,7 +198,7 @@ function Modal({ children, onClose }: { children: React.ReactNode; onClose: () =
   )
 }
 
-// ── Tipos de filtros e ordenação ──────────────────────────────
+// ââ Tipos de filtros e ordenação ââââââââââââââââââââââââââââââ
 type SortKey = 'id' | 'devedor_nome' | 'credor_nome' | 'valor_atualizado' | 'etapa_atual' | 'dias' | 'advogado_nome' | 'data_abertura'
 type SortDir = 'asc' | 'desc'
 
@@ -208,12 +208,12 @@ type ModalAberto =
   | { tipo: 'arquivar'; casoId: string; devedorNome: string }
   | null
 
-// ── Componente principal ──────────────────────────────────────
+// ââ Componente principal ââââââââââââââââââââââââââââââââââââââ
 export default function ListaCasos() {
   const navigate = useNavigate()
   const { casos, advogados, loading, error, refetch, arquivarCaso, alterarEtapa, registrarEvento } = useListaCasos()
 
-  // ── Filtros ────────────────────────────────────────────────
+  // ââ Filtros ââââââââââââââââââââââââââââââââââââââââââââââââ
   const [textoBusca,     setTextoBusca]     = useState('')
   const [textoDebounced, setTextoDebounced] = useState('')
   const [filtroEtapa,    setFiltroEtapa]    = useState('')
@@ -222,12 +222,12 @@ export default function ListaCasos() {
   const [valorMin,       setValorMin]       = useState('')
   const [valorMax,       setValorMax]       = useState('')
 
-  // ── Ordenação e paginação ──────────────────────────────────
+  // ââ Ordenação e paginação ââââââââââââââââââââââââââââââââââ
   const [sortKey,   setSortKey]   = useState<SortKey>('data_abertura')
   const [sortDir,   setSortDir]   = useState<SortDir>('desc')
   const [pagina,    setPagina]    = useState(1)
 
-  // ── Modais de ação por linha ───────────────────────────────
+  // ââ Modais de ação por linha âââââââââââââââââââââââââââââââ
   const [modalAberto, setModalAberto] = useState<ModalAberto>(null)
   const [eventoTipo,  setEventoTipo]  = useState('OUTRO')
   const [eventoDesc,  setEventoDesc]  = useState('')
@@ -246,7 +246,7 @@ export default function ListaCasos() {
   // Resetar página ao mudar filtros
   useEffect(() => { setPagina(1) }, [textoDebounced, filtroEtapa, filtroPresc, filtroAdv, valorMin, valorMax])
 
-  // ── Filtragem + ordenação ──────────────────────────────────
+  // ââ Filtragem + ordenação ââââââââââââââââââââââââââââââââââ
   const casosFiltrados = useMemo(() => {
     let lista = [...casos]
 
@@ -341,7 +341,7 @@ export default function ListaCasos() {
     }
   }
 
-  // ── Ações por linha ────────────────────────────────────────
+  // ââ Ações por linha ââââââââââââââââââââââââââââââââââââââââ
   async function handleSalvarEvento() {
     if (!modalAberto || modalAberto.tipo !== 'evento') return
     if (!eventoDesc.trim()) return
@@ -370,7 +370,7 @@ export default function ListaCasos() {
     setModalAberto(null)
   }
 
-  // ── Cabeçalho da coluna clicável ──────────────────────────
+  // ââ Cabeçalho da coluna clicável ââââââââââââââââââââââââââ
   function Th({
     label, sortable, colKey, className = '',
   }: { label: string; sortable?: boolean; colKey?: SortKey; className?: string }) {
@@ -388,7 +388,7 @@ export default function ListaCasos() {
     )
   }
 
-  // ── Render ────────────────────────────────────────────────
+  // ââ Render ââââââââââââââââââââââââââââââââââââââââââââââââ
   return (
     <div className="flex flex-col h-full gap-4">
 
@@ -766,8 +766,8 @@ export default function ListaCasos() {
           >
             <p className="font-lato text-sm" style={{ color: '#9B9B9B' }}>
               Página {paginaAtual} de {totalPaginas}
-              {' · '}
-              {inicio + 1}–{Math.min(inicio + POR_PAGINA, casosFiltrados.length)} de {casosFiltrados.length}
+              {' Â· '}
+              {inicio + 1}â{Math.min(inicio + POR_PAGINA, casosFiltrados.length)} de {casosFiltrados.length}
             </p>
 
             <div className="flex items-center gap-2">
@@ -792,7 +792,7 @@ export default function ListaCasos() {
                   }, [])
                   .map((p, i) =>
                     p === '...'
-                      ? <span key={`e${i}`} className="px-2 py-1 text-sm" style={{ color: '#C0C0C0' }}>…</span>
+                      ? <span key={`e${i}`} className="px-2 py-1 text-sm" style={{ color: '#C0C0C0' }}>â¦</span>
                       : (
                         <button
                           key={p}
@@ -823,7 +823,7 @@ export default function ListaCasos() {
         )}
       </div>
 
-      {/* ── Modais de ação por linha ── */}
+      {/* ââ Modais de ação por linha ââ */}
 
       {/* Modal: Registrar evento rápido */}
       {modalAberto?.tipo === 'evento' && (
