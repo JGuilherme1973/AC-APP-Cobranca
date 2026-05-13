@@ -1,6 +1,6 @@
 /**
  * PainelAcoes — Painel de ações rápidas da Ficha do Caso.
- * 4 botões: WhatsApp · Email · Registrar Evento · Gerar PDF
+ * 4 botões: WhatsApp Â· Email Â· Registrar Evento Â· Gerar PDF
  * Cada um abre um modal contextual.
  */
 
@@ -11,7 +11,7 @@ import { gerarNotificacaoExtrajudicial, downloadPDF } from '@/lib/pdfGenerator'
 import { formatarMoeda } from '@/lib/utils'
 import type { CasoCompleto } from '@/hooks/cobranca/useFichaCaso'
 
-// ── Templates ────────────────────────────────────────────────
+// ââ Templates ââââââââââââââââââââââââââââââââââââââââââââââââ
 const TEMPLATES_WA = [
   {
     id: 'notificacao_inicial',
@@ -79,7 +79,7 @@ const TIPOS_EVENTO = [
   'PENHORA_EFETIVADA', 'ACORDO_FECHADO',
 ] as const
 
-// ── Modal Base ────────────────────────────────────────────────
+// ââ Modal Base ââââââââââââââââââââââââââââââââââââââââââââââââ
 function Modal({ titulo, onClose, children }: {
   titulo: string; onClose: () => void; children: React.ReactNode
 }) {
@@ -114,7 +114,7 @@ function Modal({ titulo, onClose, children }: {
   )
 }
 
-// ── Modal WhatsApp ────────────────────────────────────────────
+// ââ Modal WhatsApp ââââââââââââââââââââââââââââââââââââââââââââ
 function ModalWhatsApp({ caso, onClose, onEnviar }: {
   caso: CasoCompleto
   onClose: () => void
@@ -192,7 +192,7 @@ function ModalWhatsApp({ caso, onClose, onEnviar }: {
   )
 }
 
-// ── Modal Email ───────────────────────────────────────────────
+// ââ Modal Email âââââââââââââââââââââââââââââââââââââââââââââââ
 function ModalEmail({ caso, onClose, onEnviar }: {
   caso: CasoCompleto
   onClose: () => void
@@ -275,7 +275,7 @@ function ModalEmail({ caso, onClose, onEnviar }: {
   )
 }
 
-// ── Modal Registrar Evento ────────────────────────────────────
+// ââ Modal Registrar Evento ââââââââââââââââââââââââââââââââââââ
 function ModalEvento({ onClose, onSalvar }: {
   onClose: () => void
   onSalvar: (tipo: string, descricao: string) => Promise<void>
@@ -343,7 +343,7 @@ function ModalEvento({ onClose, onSalvar }: {
   )
 }
 
-// ── Componente principal ──────────────────────────────────────
+// ââ Componente principal ââââââââââââââââââââââââââââââââââââââ
 type ModalAberto = 'wa' | 'email' | 'evento' | null
 
 interface Props {
