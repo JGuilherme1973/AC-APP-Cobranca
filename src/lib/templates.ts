@@ -2,7 +2,7 @@
 // Usado pelas Edge Functions (processar-regua, alertas-lgpd, webhook-whatsapp)
 // e pelos módulos de pagamento / notificação.
 
-// ── SVG do ícone VINDEX para uso inline em e-mails ────────────
+// ââ SVG do ícone VINDEX para uso inline em e-mails ââââââââââââ
 const VINDEX_SVG_DARK = `
 <svg width="36" height="33" viewBox="0 0 60 55" xmlns="http://www.w3.org/2000/svg">
   <line x1="4" y1="4" x2="56" y2="4" stroke="#B79A5A" stroke-width="1.5" stroke-linecap="round"/>
@@ -73,7 +73,7 @@ export function gerarRodapeEmailHTML(): string {
 </table>`
 }
 
-// ── Template de notificação ao devedor (tema escuro) ──────────
+// ââ Template de notificação ao devedor (tema escuro) ââââââââââ
 export function templateNotificacaoDevedor(params: {
   nomeDevedor: string
   valorAtualizado: string
@@ -141,7 +141,7 @@ export function templateNotificacaoDevedor(params: {
 </html>`
 }
 
-// ── Template de alerta LGPD ao advogado ──────────────────────
+// ââ Template de alerta LGPD ao advogado ââââââââââââââââââââââ
 export function templateAlertaLGPD(params: {
   nomeDevedor: string
   tipoDireito: string
@@ -161,7 +161,7 @@ export function templateAlertaLGPD(params: {
       <td style="padding:32px">
         <div style="border-left:3px solid #ef4444; padding-left:16px; margin-bottom:24px">
           <p style="font-family:Georgia,serif; font-size:14px; color:#ef4444;
-                    letter-spacing:1px; margin:0 0 4px; font-weight:700">⚠ ALERTA LGPD — PRAZO CRÍTICO</p>
+                    letter-spacing:1px; margin:0 0 4px; font-weight:700">â  ALERTA LGPD — PRAZO CRÃTICO</p>
           <p style="font-family:Arial,sans-serif; font-size:12px; color:#8a9ab0; margin:0">
             Prazo de resposta vencendo em breve
           </p>
@@ -190,7 +190,7 @@ export function templateAlertaLGPD(params: {
 </html>`
 }
 
-// ── Template de confirmação de pagamento ao credor ────────────
+// ââ Template de confirmação de pagamento ao credor ââââââââââââ
 export function templateConfirmacaoPagamento(params: {
   nomeCredor: string
   valorPago: string
@@ -213,10 +213,10 @@ export function templateConfirmacaoPagamento(params: {
           Prezado(a) <strong>${nomeCredor}</strong>,
         </p>
         <div style="background:#f0faf0; border:1px solid #4ade80; border-radius:8px; padding:20px; margin-bottom:24px; text-align:center">
-          <p style="font-family:Arial,sans-serif; font-size:11px; color:#16a34a; letter-spacing:2px; text-transform:uppercase; margin:0 0 8px">✓ Pagamento Confirmado</p>
+          <p style="font-family:Arial,sans-serif; font-size:11px; color:#16a34a; letter-spacing:2px; text-transform:uppercase; margin:0 0 8px">â Pagamento Confirmado</p>
           <p style="font-family:Georgia,serif; font-size:26px; font-weight:700; color:#0E1B2A; margin:0">${valorPago}</p>
           <p style="font-family:Arial,sans-serif; font-size:11px; color:#666; margin:8px 0 0">
-            Devedor: <strong>${nomeDevedor}</strong> · Data: ${dataPagamento}
+            Devedor: <strong>${nomeDevedor}</strong> Â· Data: ${dataPagamento}
           </p>
         </div>
         <p style="font-family:Arial,sans-serif; font-size:13px; color:#555; margin:0 0 8px">Atenciosamente,</p>
